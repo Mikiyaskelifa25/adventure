@@ -49,28 +49,19 @@ export default function TripDetailContent({
   return (
     <>
       {/* ─── Hero ─── */}
-      <section className="relative h-[45vh] md:h-[55vh] min-h-[280px] w-full overflow-hidden">
-        <Image
-          src={trip.bannerImageUrl || trip.heroImage}
-          alt={trip.title}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-          unoptimized
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-100" />
-
-        {/* Breadcrumb */}
-        <div className="absolute top-28 left-6 md:left-12 flex items-center gap-2 text-white text-xs uppercase tracking-widest drop-shadow-md">
-          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-          <span className="material-symbols-outlined text-[10px]">chevron_right</span>
-          <Link href="/groups" className="hover:text-primary transition-colors">Groups</Link>
-          <span className="material-symbols-outlined text-[10px]">chevron_right</span>
-          <span className="text-primary">Ethiopia</span>
-        </div>
-      </section>
+      {(trip.bannerImageUrl || trip.heroImage) && (
+        <section className="relative h-[45vh] md:h-[55vh] min-h-[280px] w-full overflow-hidden">
+          <Image
+            src={trip.bannerImageUrl || trip.heroImage}
+            alt={trip.title}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+            unoptimized
+          />
+        </section>
+      )}
 
       {/* ─── Main Layout ─── */}
       <section className="px-4 md:px-12 pt-8 md:pt-12 pb-24 relative">
