@@ -1,0 +1,70 @@
+# Admin Dashboard Development Prompt
+
+You are an expert Next.js and React developer. I want you to build a comprehensive Admin Dashboard for my tour and travel website. The dashboard will allow me to perform full CRUD (Create, Read, Update, Delete) operations to manage all the content on my website without manually editing code or JSON files.
+
+## 1. Project Stack & Architecture
+- **Framework:** Next.js (App Router)
+- **Styling:** Tailwind CSS v4
+- **UI Components:** Shadcn UI, Radix UI, Framer Motion, Lucide React
+- **Icons:** Lucide React
+- **Data Source:** Currently, the data is stored in `public/destinations.json`. The file contains three main arrays:
+  - `tours` (complex objects with nested arrays for days, activities, highlights, tips, and images)
+  - `collections` (objects with title, image, tag)
+  - `relatedImages` (array of string image paths)
+
+## 2. Core Requirements
+
+### A. Authentication & Security
+- Implement a secure login page (`/admin/login`).
+- Use a simple authentication mechanism (e.g., NextAuth.js with Credentials provider or a simple JWT/session based approach using middleware) to protect the `/admin` routes.
+- Only authenticated admins should be able to access the dashboard and use the API routes.
+
+### B. Admin Layout & Navigation
+- Create a dedicated layout for the admin area (`app/admin/layout.tsx`).
+- Include a responsive sidebar navigation with the following links:
+  - Dashboard Overview
+  - Manage Tours
+  - Manage Collections
+  - Media/Images
+  - Settings (e.g., changing admin password)
+
+### C. Backend API Routes
+Create Next.js Route Handlers (`app/api/admin/...`) to manage the data:
+- **GET:** Read data from `public/destinations.json`.
+- **POST/PUT/DELETE:** Update the data and write it back to `public/destinations.json` using Node.js `fs` module (for local development/simple deployment) or connect to a database if you strongly recommend transitioning away from the JSON file.
+- **Image Upload API:** An endpoint to handle file uploads, saving images into the `public/` directory so they can be referenced in the JSON data.
+
+### D. CRUD Functionality Details
+
+#### 1. Manage Tours (`/admin/tours`)
+- **List View:** A data table (using Shadcn UI Table) displaying all tours with columns for Title, Duration, Category, and Actions (Edit/Delete).
+- **Create/Edit Form:** A complex form to handle the tour object structure:
+  - Basic Info: Title, Description, Duration, Category.
+  - Media: Hero Image, Banner Image, array of gallery images (with image upload capability).
+  - Highlights: Dynamic list where I can add/remove text items.
+  - Tips: Dynamic list for adding/removing text items.
+  - Days & Activities: A deeply nested dynamic form where I can add days (Day 1, Day 2, etc.), and for each day, add multiple activities (name, place, longitude, latitude).
+
+#### 2. Manage Collections (`/admin/collections`)
+- **List View:** Table showing collections.
+- **Create/Edit Form:** Fields for Title, Tag, and Image upload.
+
+#### 3. Media Management (`/admin/media`)
+- A grid view showing all images in the `public` folder.
+- Drag-and-drop file upload zone to easily add new images to the website.
+
+## 3. UI/UX Guidelines
+- **Premium Feel:** The dashboard should look clean, modern, and professional. Use Shadcn UI's sleek components (Cards, Inputs, Buttons, Dialogs, Data Tables).
+- **Feedback:** Use Toast notifications (Shadcn Toast/Sonner) for all success and error states (e.g., "Tour saved successfully", "Failed to delete image").
+- **Confirmations:** Add confirmation dialogs (Alert Dialog) before deleting any tour or collection to prevent accidental data loss.
+- **Form Validation:** Use React Hook Form with Zod for robust form validation.
+
+## 4. Step-by-Step Execution Plan
+When you start, please break down the work into the following phases and ask for my confirmation before proceeding to the next:
+1. **Phase 1:** Setup Admin Layout, Sidebar, and Authentication.
+2. **Phase 2:** Create API routes for reading/writing the JSON file and handling image uploads.
+3. **Phase 3:** Build the Collections CRUD interface (simpler forms).
+4. **Phase 4:** Build the Tours CRUD interface (complex nested forms).
+5. **Phase 5:** Build the Media Library and final polish.
+
+Please provide the code for Phase 1 to get started.

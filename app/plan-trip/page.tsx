@@ -1,0 +1,279 @@
+"use client";
+
+import { useState } from "react";
+import TopNavBar from "@/components/TopNavBar";
+import Footer from "@/components/Footer";
+import AnimateOnScroll from "@/components/AnimateOnScroll";
+
+const destinations = ["Danakil Depression", "Omo Valley", "Lalibela", "Simien Mountains", "Bale Mountains", "Historical North", "Other"];
+const tripTypes = ["Adventure", "Cultural", "Photography", "Trekking", "Family", "Other"];
+
+type Status = "idle" | "loading" | "success" | "error";
+
+interface GeoInfo {
+  country: string;
+  address: string;
+}
+
+async function getGeoInfo(): Promise<GeoInfo> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
+    const res = await fetch("https://ipapi.co/json/", { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (!res.ok) throw new Error("geo lookup failed");
+    const data = await res.json();
+    return {
+      country: data.country_name || "Unknown",
+      address: [data.city, data.region, data.country_name].filter(Boolean).join(", ") || "Unknown"
+    };
+  } catch {
+    return { country: "Unknown", address: "Unknown" };
+  }
+}
+
+export default function PlanTripPage() {
+  const [formState, setFormState] = useState({
+    name: "",
+    email: "",
+    travelers: "1",
+    selectedDestinations: [] as string[],
+    selectedType: "",
+    customType: "",
+    customDest: "",
+    message: "",
+  });
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const toggleDestination = (dest: string) => {
+    setFormState(prev => ({
+      ...prev,
+      selectedDestinations: prev.selectedDestinations.includes(dest)
+        ? prev.selectedDestinations.filter(d => d !== dest)
+        : [...prev.selectedDestinations, dest]
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("loading");
+    setErrorMsg("");
+
+    try {
+      const geo = await getGeoInfo();
+      const typeToSend = formState.selectedType === "Other" ? formState.customType : formState.selectedType;
+      const destsToSend = formState.selectedDestinations.includes("Other")
+        ? [...formState.selectedDestinations.filter(d => d !== "Other"), formState.customDest || "Custom"]
+        : formState.selectedDestinations;
+      const res = await fetch("/api/plan-trip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formState, selectedType: typeToSend, selectedDestinations: destsToSend, ...geo }),
+      });
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Failed to submit plan. Please try again.");
+
+      setStatus("success");
+      setFormState({ 
+        name: "", 
+        email: "", 
+        travelers: "1", 
+        selectedDestinations: [], 
+        selectedType: "", 
+        customType: "",
+        customDest: "",
+        message: "" 
+      });
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Submission failed");
+      setStatus("error");
+    }
+  };
+
+  const isLoading = status === "loading";
+
+  return (
+    <>
+      <TopNavBar />
+      <main className="min-h-screen pt-28 md:pt-32 pb-20 px-6 md:px-12">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+          {/* Left Column */}
+          <AnimateOnScroll animation="fade-right">
+            <div>
+              <span className="text-primary font-label uppercase tracking-[0.4em] mb-6 block text-xs">
+                Customized Travel
+              </span>
+              <h1 className="font-headline text-4xl md:text-7xl text-on-surface leading-tight mb-6 md:mb-8 font-bold">
+                Planning your trip?<br />
+                <span className="italic font-normal text-primary text-3xl md:text-6xl">Let&apos;s make it unforgettable.</span>
+              </h1>
+              <p className="text-on-surface-variant font-body text-lg md:text-xl leading-relaxed mb-8 md:mb-12 max-w-md">
+                Tell us your vision, and we&apos;ll craft a seamless, authentic journey tailored exactly to your preferences.
+              </p>
+
+              <div className="space-y-6">
+                <div className="flex items-center gap-4 p-4 rounded-2xl bg-stone-50/80 dark:bg-white/5 border border-outline dark:border-white/5">
+                  <span className="material-symbols-outlined text-primary">verified</span>
+                  <p className="text-sm">Expertly curated by local specialists</p>
+                </div>
+                <div className="flex items-center gap-4 p-4 rounded-2xl bg-stone-50/80 dark:bg-white/5 border border-outline dark:border-white/5">
+                  <span className="material-symbols-outlined text-primary">schedule</span>
+                  <p className="text-sm">Response within 24 hours</p>
+                </div>
+              </div>
+            </div>
+          </AnimateOnScroll>
+
+          {/* Right Column: Form */}
+          <AnimateOnScroll animation="fade-left" delay={0.2}>
+            <div className="relative bg-stone-50 dark:bg-stone-900 rounded-[2.5rem] p-8 md:p-12 shadow-xl border border-stone-200 dark:border-white/10 transition-colors">
+              {/* Success overlay */}
+              {status === "success" && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center rounded-[2.5rem] bg-stone-50/95 dark:bg-stone-900/95 backdrop-blur-md z-10 p-10 text-center">
+                  <div className="w-20 h-20 rounded-full bg-primary/15 flex items-center justify-center mb-6">
+                    <span className="material-symbols-outlined text-primary text-4xl">check_circle</span>
+                  </div>
+                  <h3 className="font-headline text-2xl text-on-surface mb-3">Plan Received!</h3>
+                  <p className="text-on-surface-variant font-body mb-8">
+                    Your luxury travel request has been delivered. Our itinerary specialists will review it and contact you shortly.
+                  </p>
+                  <button
+                    onClick={() => setStatus("idle")}
+                    className="px-8 py-3 rounded-2xl border border-primary text-primary font-bold text-sm transition-all hover:bg-primary hover:text-on-primary"
+                  >
+                    Create Another Plan
+                  </button>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Name</label>
+                    <input
+                      type="text" required value={formState.name}
+                      disabled={isLoading}
+                      onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                      className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-4 text-stone-900 dark:text-on-surface focus:border-primary outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-on-surface/30 shadow-sm disabled:opacity-50"
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Email</label>
+                    <input
+                      type="email" required value={formState.email}
+                      disabled={isLoading}
+                      onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+                      className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-4 text-stone-900 dark:text-on-surface focus:border-primary outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-on-surface/30 shadow-sm disabled:opacity-50"
+                      placeholder="email@example.com"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Travelers</label>
+                    <select
+                      value={formState.travelers}
+                      disabled={isLoading}
+                      onChange={(e) => setFormState({...formState, travelers: e.target.value})}
+                      className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-4 text-stone-900 dark:text-on-surface focus:border-primary outline-none appearance-none shadow-sm disabled:opacity-50"
+                    >
+                      {[1,2,3,4,5,6,7,8,9, "10+"].map(n => (
+                        <option key={n} value={n} className="bg-white dark:bg-stone-900 text-stone-900 dark:text-white">{n} {n === 1 ? 'Person' : 'People'}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Trip Style</label>
+                    <div className="flex flex-wrap gap-2">
+                      {tripTypes.map(type => (
+                        <button
+                          key={type} type="button"
+                          disabled={isLoading}
+                          onClick={() => setFormState({...formState, selectedType: type})}
+                          className={`px-3 py-1.5 rounded-full text-[9px] uppercase tracking-widest border transition-all ${
+                            formState.selectedType === type
+                              ? "bg-primary border-primary text-on-primary font-bold shadow-md shadow-primary/20"
+                              : "bg-white dark:bg-white/5 border-stone-200 dark:border-white/10 text-stone-600 dark:text-on-surface/60 hover:bg-stone-100 dark:hover:bg-white/10 shadow-sm"
+                          } disabled:opacity-50`}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                    {formState.selectedType === "Other" && (
+                      <input
+                        type="text" value={formState.customType}
+                        disabled={isLoading}
+                        onChange={(e) => setFormState({ ...formState, customType: e.target.value })}
+                        placeholder="Describe your trip style..."
+                        className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-stone-900 dark:text-on-surface focus:border-primary outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-on-surface/30 shadow-sm disabled:opacity-50 mt-2"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Destinations</label>
+                  <div className="flex flex-wrap gap-2">
+                    {destinations.map(dest => (
+                      <button
+                        key={dest} type="button"
+                        disabled={isLoading}
+                        onClick={() => toggleDestination(dest)}
+                        className={`px-4 py-2 rounded-xl text-[10px] border transition-all ${
+                          formState.selectedDestinations.includes(dest)
+                            ? "bg-primary/10 border-primary text-primary font-bold shadow-sm"
+                            : "bg-white dark:bg-white/5 border-stone-200 dark:border-white/10 text-stone-600 dark:text-on-surface/70 hover:bg-stone-100 shadow-sm"
+                        } disabled:opacity-50`}
+                      >
+                        {dest}
+                      </button>
+                    ))}
+                  </div>
+                  {formState.selectedDestinations.includes("Other") && (
+                    <input
+                      type="text" value={formState.customDest}
+                      disabled={isLoading}
+                      onChange={(e) => setFormState({ ...formState, customDest: e.target.value })}
+                      placeholder="Enter your destination..."
+                      className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-stone-900 dark:text-on-surface focus:border-primary outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-on-surface/30 shadow-sm disabled:opacity-50"
+                    />
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Additional Notes</label>
+                  <textarea
+                    rows={3} value={formState.message}
+                    disabled={isLoading}
+                    onChange={(e) => setFormState({ ...formState, message: e.target.value })}
+                    className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-4 text-stone-900 dark:text-on-surface focus:border-primary outline-none resize-none placeholder:text-stone-400 dark:placeholder:text-on-surface/30 shadow-sm disabled:opacity-50"
+                    placeholder="Tell us about your preferences..."
+                  />
+                </div>
+
+                {status === "error" && (
+                  <p className="text-red-500 text-xs font-bold text-center">{errorMsg}</p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-primary text-on-primary font-bold py-5 rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? "Delivering Plan..." : "Request Itinerary"}
+                  {!isLoading && <span className="material-symbols-outlined">arrow_forward</span>}
+                </button>
+              </form>
+            </div>
+          </AnimateOnScroll>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
