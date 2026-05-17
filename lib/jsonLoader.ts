@@ -79,7 +79,7 @@ export async function getToursFromJSON(): Promise<Trip[]> {
       reviews: 12,
       groupSize: "6–12",
       difficulty: "Moderate",
-      images: tour.images || [`/pic${(index % 6) + 1}.jpg`, `/pic${((index + 1) % 6) + 1}.jpg`, `/pic${((index + 2) % 6) + 1}.jpg`],
+      images: tour.images?.length ? tour.images : [],
       heroImage: tour.heroImage || `/pic${(index % 6) + 1}.jpg`,
       bannerImageUrl: tour.bannerImageUrl || tour.heroImage || `/pic${(index % 6) + 1}.jpg`,
       category: tour.category || "Group Trip",

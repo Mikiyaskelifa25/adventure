@@ -83,7 +83,7 @@ function mapTour(tour: SupabaseTour, index: number): Trip {
     reviews: 12,
     groupSize: tour.group_size ? `${tour.group_size}` : "6–12",
     difficulty: tour.difficulty || "Moderate",
-    images: tour.images?.length >= 3 ? tour.images : ["/pic1.jpg", "/pic2.JPG", "/pic3.JPG"],
+    images: tour.images?.length ? tour.images : [],
     heroImage: tour.hero_image || "/pic1.jpg",
     bannerImageUrl: tour.banner_image || tour.hero_image || "/pic1.jpg",
     description: tour.description || itinerary[0]?.description || "Explore the wonders of Ethiopia.",

@@ -116,28 +116,30 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
                   href={`/groups/${trip.slug}`}
                   className="bg-surface/50 dark:bg-white/5 rounded-2xl overflow-hidden border border-outline/50 dark:border-white/10 flex flex-col md:flex-row group hover:bg-surface dark:hover:bg-white/[0.08] hover:border-primary/60 dark:hover:border-primary/20 shadow-glass hover:shadow-premium transition-all duration-500 cursor-pointer block"
                 >
-                  {/* Image collage */}
-                  <div className="md:w-[340px] md:shrink-0 h-[220px] md:h-auto relative grid grid-cols-3 grid-rows-2 gap-1 p-1 bg-surface-variant dark:bg-stone-900">
-                    <div className="col-span-2 row-span-2 relative overflow-hidden rounded-l-xl">
-                      <Image
-                        src={trip.images[0] || "/pic1.jpg"}
-                        alt={trip.title}
-                        fill
-                        sizes="(max-width: 768px) 60vw, 220px"
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
-                        unoptimized
-                      />
-                    </div>
-                    <div className="relative overflow-hidden rounded-sm">
-                      <Image src={trip.images[1] || "/pic2.JPG"} alt={trip.title} fill sizes="110px" className="object-cover" unoptimized />
-                    </div>
-                    <div className="relative overflow-hidden rounded-br-xl">
-                      <Image src={trip.images[2] || "/pic3.JPG"} alt={trip.title} fill sizes="110px" className="object-cover" unoptimized />
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                        <span className="text-white font-label text-xs">+5</span>
+                  {trip.images.length > 0 && (
+                    <div className="md:w-[340px] md:shrink-0 h-[220px] md:h-auto relative grid grid-cols-3 grid-rows-2 gap-1 p-1 bg-surface-variant dark:bg-stone-900">
+                      <div className="col-span-2 row-span-2 relative overflow-hidden rounded-l-xl">
+                        <Image
+                          src={trip.images[0]}
+                          alt={trip.title}
+                          fill
+                          sizes="(max-width: 768px) 60vw, 220px"
+                          className="object-cover group-hover:scale-105 transition-transform duration-700"
+                          unoptimized
+                        />
                       </div>
+                      {trip.images[1] && (
+                        <div className="relative overflow-hidden rounded-sm">
+                          <Image src={trip.images[1]} alt={trip.title} fill sizes="110px" className="object-cover" unoptimized />
+                        </div>
+                      )}
+                      {trip.images[2] && (
+                        <div className="relative overflow-hidden rounded-br-xl">
+                          <Image src={trip.images[2]} alt={trip.title} fill sizes="110px" className="object-cover" unoptimized />
+                        </div>
+                      )}
                     </div>
-                  </div>
+                  )}
 
                   {/* Content */}
                   <div className="flex-1 p-6 md:p-8 flex flex-col justify-between">
