@@ -64,7 +64,6 @@ export default function TourMap({ trip }: TourMapProps) {
   } | null>(null);
 
   const stops = useMemo(() => {
-    const uniqueOvernights = new Set<string>();
     const result: { id: number; name: string; coords: [number, number]; description: string }[] = [];
 
     const addisCoords: [number, number] = locationCoords["Addis Ababa"] || [38.7468, 9.0192];
@@ -76,26 +75,21 @@ export default function TourMap({ trip }: TourMapProps) {
       coords: addisCoords,
       description: "Starting point",
     });
-    uniqueOvernights.add("Addis Ababa");
 
     trip.itinerary.forEach((day, index) => {
-      if (day.overnight !== "Departure" && !uniqueOvernights.has(day.overnight)) {
-        uniqueOvernights.add(day.overnight);
-
-        let coords: [number, number];
-        if (day.lng !== undefined && day.lat !== undefined) {
-          coords = [day.lng, day.lat];
-        } else {
-          coords = locationCoords[day.overnight] || addisCoords;
-        }
-
-        result.push({
-          id: index,
-          name: day.overnight,
-          coords: coords,
-          description: day.title,
-        });
+      let coords: [number, number];
+      if (day.lng !== undefined && day.lat !== undefined) {
+        coords = [day.lng, day.lat];
+      } else {
+        coords = locationCoords[day.overnight] || addisCoords;
       }
+
+      result.push({
+        id: index,
+        name: day.overnight || `Day ${day.day}`,
+        coords,
+        description: day.title,
+      });
     });
     return result;
   }, [trip]);
