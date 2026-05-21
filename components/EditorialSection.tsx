@@ -1,14 +1,25 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import DestinationCard from "./DestinationCard";
 import AnimateOnScroll from "./AnimateOnScroll";
+import { Trip, getTripTitle } from "@/lib/tripsData";
+import { useLanguage } from "@/lib/i18n/context";
+import { t } from "@/lib/i18n/translations";
 import { getToursFromSupabase } from "@/lib/supabaseData";
 
-export default async function EditorialSection() {
-  const tours = await getToursFromSupabase();
+export default function EditorialSection() {
+  const { lang } = useLanguage();
+  const [tours, setTours] = useState<Trip[]>([]);
+
+  useEffect(() => {
+    getToursFromSupabase().then(setTours);
+  }, []);
 
   const destinations = tours.map((tour, index) => ({
     region: tour.region,
-    title: tour.title,
+    title: getTripTitle(tour, lang),
     imageUrl: tour.heroImage,
     imageAlt: tour.description,
     href: `/groups/${tour.slug}`,
@@ -25,7 +36,7 @@ export default async function EditorialSection() {
           <div className="md:col-span-12">
             <AnimateOnScroll animation="reveal-3d">
               <h2 className="text-foreground font-headline text-5xl md:text-7xl font-bold leading-tight mb-8">
-                Itineraries
+                {t("itineraries", lang)}
               </h2>
             </AnimateOnScroll>
           </div>
@@ -58,7 +69,7 @@ export default async function EditorialSection() {
               href="/itineraries"
               className="inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-4 rounded-full font-bold text-sm tracking-widest uppercase hover:scale-105 transition-transform shadow-lg shadow-primary/20"
             >
-              See All Itineraries
+              {t("all_itineraries", lang)}
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>

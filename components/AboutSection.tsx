@@ -3,21 +3,24 @@
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { useLanguage } from "@/lib/i18n/context";
+import { t } from "@/lib/i18n/translations";
 
 const stats = [
-  { value: "16+", label: "Years" },
-  { value: "500+", label: "Travelers" },
-  { value: "30+", label: "Destinations" },
+  { value: "16+", key: "years" },
+  { value: "500+", key: "travelers" },
+  { value: "30+", key: "destinations_lower" },
 ];
 
 const highlights = [
-  { icon: "landscape", text: "Simien Mountains treks" },
-  { icon: "church", text: "Lalibela rock-hewn churches" },
-  { icon: "diversity_3", text: "Community-first tourism" },
-  { icon: "eco", text: "Eco-conscious journeys" },
+  { icon: "landscape", key: "simien_treks" },
+  { icon: "church", key: "lalibela_churches" },
+  { icon: "diversity_3", key: "community_tourism" },
+  { icon: "eco", key: "eco_journeys" },
 ];
 
 export default function AboutSection() {
+  const { lang } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -55,12 +58,11 @@ export default function AboutSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 md:mb-14"
         >
-
           <h2
             className="font-headline text-3xl md:text-5xl lg:text-6xl leading-tight"
             style={{ color: "var(--on-surface)" }}
           >
-            Who we are
+            {t("who_we_are", lang)}
           </h2>
         </motion.div>
 
@@ -80,10 +82,6 @@ export default function AboutSection() {
             <div className="book-page book-page-left">
               <div className="page-inner-shadow-left" aria-hidden />
               <div className="book-page-edges book-page-edges-left" aria-hidden />
-              {/* 
-                Key fix: use a fixed aspect-ratio wrapper so next/image fill
-                always has a measurable height on every screen size.
-              */}
               <div className="book-image-wrapper">
                 <Image
                   src="/about.jpg"
@@ -98,9 +96,9 @@ export default function AboutSection() {
                 {/* Stats */}
                 <div className="book-stats">
                   {stats.map((s) => (
-                    <div key={s.value} className="book-stat">
+                    <div key={s.key} className="book-stat">
                       <div className="book-stat-value">{s.value}</div>
-                      <div className="book-stat-label">{s.label}</div>
+                      <div className="book-stat-label">{t(s.key, lang)}</div>
                     </div>
                   ))}
                 </div>
@@ -120,14 +118,14 @@ export default function AboutSection() {
                   className="font-label uppercase tracking-[0.4em] text-[10px] mb-3"
                   style={{ color: "var(--primary)" }}
                 >
-                  Adventure in Ethiopia
+                  {t("adventure_in_ethiopia", lang)}
                 </p>
 
                 <h3
                   className="font-headline text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-snug mb-4"
                   style={{ color: "var(--on-surface)" }}
                 >
-                  Adventure in Ethiopia
+                  {t("adventure_in_ethiopia", lang)}
                 </h3>
 
                 <div
@@ -135,23 +133,17 @@ export default function AboutSection() {
                   style={{ color: "var(--on-surface-variant)" }}
                 >
                   <p>
-                    Founded with a passion for the hidden wonders of the
-                    Abyssinian highlands, Adventure in Ethiopia is more than a
-                    travel agency — we are a bridge between curious travelers
-                    and the ancient, vibrant soul of Ethiopia.
+                    {t("about_text_1", lang)}
                   </p>
                   <p className="hidden sm:block">
-                    Our mission is to provide transformative experiences that
-                    respect local communities and preserve the natural beauty of
-                    our diverse regions. From rugged mountains to spiritual
-                    rock-hewn sanctuaries, we craft journeys that tell a story.
+                    {t("about_text_2", lang)}
                   </p>
                 </div>
 
                 {/* Highlights */}
                 <ul className="space-y-1.5 mb-5">
                   {highlights.map((h) => (
-                    <li key={h.icon} className="flex items-center gap-2.5">
+                    <li key={h.key} className="flex items-center gap-2.5">
                       <span
                         className="material-symbols-outlined text-base flex-shrink-0"
                         style={{ color: "var(--primary)" }}
@@ -162,7 +154,7 @@ export default function AboutSection() {
                         className="font-body text-sm"
                         style={{ color: "var(--on-surface)" }}
                       >
-                        {h.text}
+                        {t(h.key, lang)}
                       </span>
                     </li>
                   ))}
@@ -177,7 +169,7 @@ export default function AboutSection() {
                   href="#contact-us"
                   className="inline-flex items-center gap-2 font-label text-xs uppercase tracking-widest px-5 py-2.5 rounded-full transition-all duration-300 book-cta-btn"
                 >
-                  Plan your journey
+                  {t("plan_your_journey", lang)}
                   <span className="material-symbols-outlined text-sm">
                     arrow_forward
                   </span>

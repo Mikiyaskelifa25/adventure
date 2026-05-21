@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Testimonial } from "@/lib/testimonialsData";
 import AnimateOnScroll from "./AnimateOnScroll";
 import Image from "next/image";
+import { useLanguage } from "@/lib/i18n/context";
+import { t } from "@/lib/i18n/translations";
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
@@ -11,6 +13,7 @@ interface TestimonialCardProps {
 }
 
 export default function TestimonialCard({ testimonial, index }: TestimonialCardProps) {
+  const { lang } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
   const maxLength = 200;
   const isLong = testimonial.quote.length > maxLength;
@@ -37,7 +40,7 @@ export default function TestimonialCard({ testimonial, index }: TestimonialCardP
               onClick={() => setIsExpanded(!isExpanded)}
               className="text-primary text-sm font-label uppercase tracking-wider mb-8 hover:underline focus:outline-none"
             >
-              {isExpanded ? "Show Less" : "Read More"}
+              {isExpanded ? t("show_less", lang) : t("read_more", lang)}
             </button>
           )}
         </blockquote>

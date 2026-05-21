@@ -1,9 +1,11 @@
 import { supabase } from "./supabase";
 import { Trip, TripDay } from "./tripsData";
+import type { Language } from "./i18n/translations";
 
 interface SupabaseTour {
   id: string;
   title: string;
+  title_fr?: string;
   category: string;
   duration: string;
   hero_image: string;
@@ -25,7 +27,9 @@ interface SupabaseTour {
   group_size: number | null;
   difficulty: string | null;
   description?: string;
+  description_fr?: string;
   region?: string;
+  region_fr?: string;
   display_order: number;
   type: string | null;
 }
@@ -75,6 +79,7 @@ function mapTour(tour: SupabaseTour, index: number): Trip {
     id: index + 1,
     slug,
     title: tour.title || itinerary[0]?.title || "Ethiopia Tour",
+    title_fr: tour.title_fr,
     duration: tour.duration,
     daysCount: itinerary.length,
     price: "€2,450",
@@ -87,6 +92,7 @@ function mapTour(tour: SupabaseTour, index: number): Trip {
     heroImage: tour.hero_image || "",
     bannerImageUrl: tour.banner_image || tour.hero_image || "",
     description: tour.description || itinerary[0]?.description || "Explore the wonders of Ethiopia.",
+    description_fr: tour.description_fr,
     longDescription:
       itinerary.map((d) => d.description).join(" ") ||
       "This journey offers a deep dive into the unique landscapes and cultures of Ethiopia.",
@@ -108,6 +114,7 @@ function mapTour(tour: SupabaseTour, index: number): Trip {
       "Tipping (optional)",
     ],
     region: tour.region || "Ethiopia",
+    region_fr: tour.region_fr,
     isNew: index === 0,
     category: mapCategory(tour.category),
     type: tour.type,

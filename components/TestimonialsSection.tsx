@@ -4,9 +4,11 @@ import { testimonials } from "@/lib/testimonialsData";
 import TestimonialCard from "./TestimonialCard";
 import AnimateOnScroll from "./AnimateOnScroll";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/context";
+import { t } from "@/lib/i18n/translations";
 
 export default function TestimonialsSection() {
-  // Show only the first 3 testimonials on the home page
+  const { lang } = useLanguage();
   const featuredTestimonials = testimonials.slice(0, 3);
 
   return (
@@ -14,9 +16,8 @@ export default function TestimonialsSection() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
           <AnimateOnScroll animation="fade-right">
-
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-headline font-bold text-on-surface tracking-tight">
-              What they say <br /> <span className="text-primary">about us</span>
+              {t("what_they_say", lang)} <br /> <span className="text-primary">{t("about_us", lang)}</span>
             </h2>
           </AnimateOnScroll>
           
@@ -25,7 +26,7 @@ export default function TestimonialsSection() {
               href="/testimonials"
               className="inline-flex items-center gap-2 text-on-surface hover:text-primary transition-colors font-bold text-sm uppercase tracking-widest border-b border-primary/30 pb-1"
             >
-              View all stories
+              {t("view_all_stories", lang)}
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </AnimateOnScroll>

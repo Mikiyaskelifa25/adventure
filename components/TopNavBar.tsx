@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "@/lib/i18n/context";
+import { t } from "@/lib/i18n/translations";
 
 export default function TopNavBar() {
+  const { lang } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -35,10 +38,10 @@ export default function TopNavBar() {
   }, []);
 
   const navLinks = [
-    { label: "About Us", href: "/#about-us" },
-    { label: "Destinations", href: "/#destinations" },
-    { label: "Testimonials", href: "/testimonials" },
-    { label: "Contact Us", href: "/#contact" },
+    { label: t("about", lang), href: "/#about-us" },
+    { label: t("destinations", lang), href: "/#destinations" },
+    { label: t("testimonials", lang), href: "/testimonials" },
+    { label: t("contact", lang), href: "/#contact" },
   ];
 
   return (
@@ -55,7 +58,7 @@ export default function TopNavBar() {
           className={`font-bold font-headline tracking-wider uppercase hover:opacity-80 transition-all shrink-0 ${isScrolled || menuOpen ? "text-on-surface" : "text-white/90"
             }`}
         >
-          <span className="hidden md:inline text-[clamp(0.875rem,4cqi,1.5rem)]">Adventure Ethiopia Travel</span>
+          <span className="hidden md:inline text-[clamp(0.875rem,4cqi,1.5rem)]">{t("adventure_ethiopia_travel", lang)}</span>
           <span className="md:hidden flex flex-col leading-none text-[clamp(0.6rem,3cqi,0.85rem)]">
             <span>Adventure</span>
             <span>Ethiopia</span>
@@ -67,7 +70,7 @@ export default function TopNavBar() {
         <div className="hidden md:flex items-center gap-7 font-headline tracking-tight">
           {navLinks.map((link) => (
             <Link
-              key={link.label}
+              key={link.href}
               className={`hover:text-primary transition-colors text-sm ${isScrolled || menuOpen ? "text-on-surface" : "text-white/90"
                 }`}
               href={link.href}
@@ -93,7 +96,7 @@ export default function TopNavBar() {
             href="/plan-trip"
             className="bg-primary text-on-primary px-5 py-2.5 rounded-xl font-bold text-sm hover:scale-95 duration-200 ease-in-out shadow-lg shadow-primary/20"
           >
-            Plan Trip
+            {t("plan_trip", lang)}
           </Link>
         </div>
 
@@ -137,7 +140,7 @@ export default function TopNavBar() {
           <div className="flex-1 flex flex-col gap-2">
             {navLinks.map((link) => (
               <Link
-                key={link.label}
+                key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
                 className="py-4 text-on-surface font-headline text-xl border-b border-outline/30 hover:text-primary transition-colors"
@@ -161,7 +164,7 @@ export default function TopNavBar() {
               onClick={() => setMenuOpen(false)}
               className="block bg-primary text-on-primary px-6 py-3 rounded-xl font-bold text-sm text-center hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
             >
-              Plan Trip
+              {t("plan_trip", lang)}
             </Link>
           </div>
         </div>

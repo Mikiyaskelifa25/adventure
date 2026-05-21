@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import AnimateOnScroll from "./AnimateOnScroll";
+import { useLanguage } from "@/lib/i18n/context";
+import { t } from "@/lib/i18n/translations";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -15,8 +17,6 @@ async function getGeoInfo(): Promise<GeoInfo> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2500);
 
-    // Using ip-api.com (HTTP) or ipapi.co (HTTPS)
-    // ipapi.co is generally reliable for client-side HTTPS
     const res = await fetch("https://ipapi.co/json/", { signal: controller.signal });
     clearTimeout(timeoutId);
 
@@ -34,6 +34,7 @@ async function getGeoInfo(): Promise<GeoInfo> {
 }
 
 export default function ContactSection() {
+  const { lang } = useLanguage();
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -54,7 +55,6 @@ export default function ContactSection() {
     setErrorMsg("");
 
     try {
-      // Fetch user geo quietly while they wait
       const geo = await getGeoInfo();
 
       const res = await fetch("/api/contact", {
@@ -66,13 +66,13 @@ export default function ContactSection() {
       const json = await res.json();
 
       if (!res.ok) {
-        throw new Error(json.error || "Something went wrong");
+        throw new Error(json.error || t("something_went_wrong", lang));
       }
 
       setStatus("success");
       setFormState({ name: "", email: "", phone: "", subject: "", message: "" });
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "Unknown error");
+      setErrorMsg(err instanceof Error ? err.message : t("something_went_wrong", lang));
       setStatus("error");
     }
   };
@@ -89,15 +89,14 @@ export default function ContactSection() {
         <AnimateOnScroll animation="fade-right">
           <div>
             <span className="text-primary font-label uppercase tracking-[0.4em] mb-6 block text-xs">
-              Contact Us
+              {t("contact_us", lang)}
             </span>
             <h2 className="font-headline text-4xl md:text-5xl text-on-surface leading-tight mb-8">
-              Have questions? <br />
-              <span className="italic font-normal">We&apos;re here to help.</span>
+              {t("have_questions", lang)} <br />
+              <span className="italic font-normal">{t("were_here_to_help", lang)}</span>
             </h2>
             <p className="text-on-surface-variant font-body text-lg leading-relaxed mb-12 max-w-md">
-              Whether you need more details about a destination or have a
-              specific question about our services, feel free to reach out.
+              {t("contact_description", lang)}
             </p>
 
             <div className="space-y-8">
@@ -109,7 +108,7 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h4 className="font-headline text-xl text-on-surface mb-1">
-                    Email Us
+                    {t("email_us", lang)}
                   </h4>
                   <p className="text-on-surface-variant font-body">
                     hello@aventure-abyssinie.com
@@ -124,7 +123,7 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h4 className="font-headline text-xl text-on-surface mb-1">
-                    Call Us
+                    {t("call_us", lang)}
                   </h4>
                   <p className="text-on-surface-variant font-body">
                     +251 91 160 3027
@@ -147,17 +146,16 @@ export default function ContactSection() {
                   </span>
                 </div>
                 <h3 className="font-headline text-2xl text-on-surface mb-3">
-                  Message Sent!
+                  {t("message_sent", lang)}
                 </h3>
                 <p className="text-on-surface-variant font-body mb-8">
-                  Thank you for reaching out. We&apos;ve received your inquiry
-                  and will get back to you soon.
+                  {t("message_sent_description", lang)}
                 </p>
                 <button
                   onClick={() => setStatus("idle")}
                   className="px-8 py-3 rounded-2xl border border-primary text-primary font-bold text-sm transition-all hover:bg-primary hover:text-on-primary"
                 >
-                  Send Another
+                  {t("send_another", lang)}
                 </button>
               </div>
             )}
@@ -167,7 +165,7 @@ export default function ContactSection() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
                   <label className="block font-label text-[10px] uppercase tracking-[0.3em] text-on-surface-variant/60 ml-1">
-                    Full Name <span className="text-primary">*</span>
+                    {t("full_name", lang)} <span className="text-primary">*</span>
                   </label>
                   <input
                     type="text"
@@ -182,7 +180,7 @@ export default function ContactSection() {
                 </div>
                 <div className="space-y-2">
                   <label className="block font-label text-[10px] uppercase tracking-[0.3em] text-on-surface-variant/60 ml-1">
-                    Email <span className="text-primary">*</span>
+                    {t("email", lang)} <span className="text-primary">*</span>
                   </label>
                   <input
                     type="email"
@@ -201,7 +199,7 @@ export default function ContactSection() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
                   <label className="block font-label text-[10px] uppercase tracking-[0.3em] text-on-surface-variant/60 ml-1">
-                    Phone Number
+                    {t("phone_number", lang)}
                   </label>
                   <input
                     type="tel"
@@ -215,7 +213,7 @@ export default function ContactSection() {
                 </div>
                 <div className="space-y-2">
                   <label className="block font-label text-[10px] uppercase tracking-[0.3em] text-on-surface-variant/60 ml-1">
-                    Subject
+                    {t("subject", lang)}
                   </label>
                   <input
                     type="text"
@@ -232,7 +230,7 @@ export default function ContactSection() {
               {/* Message */}
               <div className="space-y-2">
                 <label className="block font-label text-[10px] uppercase tracking-[0.3em] text-on-surface-variant/60 ml-1">
-                  Message <span className="text-primary">*</span>
+                  {t("message", lang)} <span className="text-primary">*</span>
                 </label>
                 <textarea
                   name="message"
@@ -242,7 +240,7 @@ export default function ContactSection() {
                   onChange={handleChange}
                   disabled={isLoading}
                   className="w-full bg-background/50 dark:bg-white/5 border border-outline dark:border-white/10 rounded-2xl px-5 py-4 text-on-surface focus:border-primary focus:bg-background transition-all outline-none resize-none disabled:opacity-50"
-                  placeholder="How can we help you?"
+                  placeholder={t("need_help", lang)}
                 />
               </div>
 
@@ -253,7 +251,7 @@ export default function ContactSection() {
                     error
                   </span>
                   <p className="text-red-400 text-sm font-body">
-                    {errorMsg || "Failed to send. Please try again."}
+                    {errorMsg || t("failed_to_send", lang)}
                   </p>
                 </div>
               )}
@@ -267,20 +265,20 @@ export default function ContactSection() {
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-3">
                     <span className="inline-block w-5 h-5 border-2 border-on-primary/30 border-t-on-primary rounded-full animate-spin" />
-                    Sending…
+                    {t("sending", lang)}…
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
                     <span className="material-symbols-outlined text-xl">
                       send
                     </span>
-                    Send Message
+                    {t("send_message", lang)}
                   </span>
                 )}
               </button>
 
               <p className="text-center text-[10px] text-on-surface-variant/40 font-body">
-                Your message is delivered securely via encrypted document.
+                {t("encrypted_message", lang)}
               </p>
             </form>
           </div>

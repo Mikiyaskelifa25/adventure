@@ -4,6 +4,8 @@ import { useState } from "react";
 import TopNavBar from "@/components/TopNavBar";
 import Footer from "@/components/Footer";
 import AnimateOnScroll from "@/components/AnimateOnScroll";
+import { useLanguage } from "@/lib/i18n/context";
+import { t } from "@/lib/i18n/translations";
 
 const destinations = ["Danakil Depression", "Omo Valley", "Lalibela", "Simien Mountains", "Bale Mountains", "Historical North", "Other"];
 const tripTypes = ["Adventure", "Cultural", "Photography", "Trekking", "Family", "Other"];
@@ -33,6 +35,7 @@ async function getGeoInfo(): Promise<GeoInfo> {
 }
 
 export default function PlanTripPage() {
+  const { lang } = useLanguage();
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -73,7 +76,7 @@ export default function PlanTripPage() {
       });
 
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Failed to submit plan. Please try again.");
+      if (!res.ok) throw new Error(json.error || t("failed_to_submit", lang));
 
       setStatus("success");
       setFormState({ 
@@ -87,7 +90,7 @@ export default function PlanTripPage() {
         message: "" 
       });
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Submission failed");
+      setErrorMsg(err instanceof Error ? err.message : t("submission_failed", lang));
       setStatus("error");
     }
   };
@@ -103,24 +106,24 @@ export default function PlanTripPage() {
           <AnimateOnScroll animation="fade-right">
             <div>
               <span className="text-primary font-label uppercase tracking-[0.4em] mb-6 block text-xs">
-                Customized Travel
+                {t("customized_travel", lang)}
               </span>
               <h1 className="font-headline text-4xl md:text-7xl text-on-surface leading-tight mb-6 md:mb-8 font-bold">
-                Planning your trip?<br />
-                <span className="italic font-normal text-primary text-3xl md:text-6xl">Let&apos;s make it unforgettable.</span>
+                {t("planning_trip", lang)}<br />
+                <span className="italic font-normal text-primary text-3xl md:text-6xl">{t("lets_make_unforgettable", lang)}</span>
               </h1>
               <p className="text-on-surface-variant font-body text-lg md:text-xl leading-relaxed mb-8 md:mb-12 max-w-md">
-                Tell us your vision, and we&apos;ll craft a seamless, authentic journey tailored exactly to your preferences.
+                {t("tell_us_vision", lang)}
               </p>
 
               <div className="space-y-6">
                 <div className="flex items-center gap-4 p-4 rounded-2xl bg-stone-50/80 dark:bg-white/5 border border-outline dark:border-white/5">
                   <span className="material-symbols-outlined text-primary">verified</span>
-                  <p className="text-sm">Expertly curated by local specialists</p>
+                  <p className="text-sm">{t("curated_by_locals", lang)}</p>
                 </div>
                 <div className="flex items-center gap-4 p-4 rounded-2xl bg-stone-50/80 dark:bg-white/5 border border-outline dark:border-white/5">
                   <span className="material-symbols-outlined text-primary">schedule</span>
-                  <p className="text-sm">Response within 24 hours</p>
+                  <p className="text-sm">{t("response_24h", lang)}</p>
                 </div>
               </div>
             </div>
@@ -135,15 +138,15 @@ export default function PlanTripPage() {
                   <div className="w-20 h-20 rounded-full bg-primary/15 flex items-center justify-center mb-6">
                     <span className="material-symbols-outlined text-primary text-4xl">check_circle</span>
                   </div>
-                  <h3 className="font-headline text-2xl text-on-surface mb-3">Plan Received!</h3>
+                  <h3 className="font-headline text-2xl text-on-surface mb-3">{t("plan_received", lang)}</h3>
                   <p className="text-on-surface-variant font-body mb-8">
-                    Your luxury travel request has been delivered. Our itinerary specialists will review it and contact you shortly.
+                    {t("plan_received_description", lang)}
                   </p>
                   <button
                     onClick={() => setStatus("idle")}
                     className="px-8 py-3 rounded-2xl border border-primary text-primary font-bold text-sm transition-all hover:bg-primary hover:text-on-primary"
                   >
-                    Create Another Plan
+                    {t("create_another_plan", lang)}
                   </button>
                 </div>
               )}
@@ -151,30 +154,30 @@ export default function PlanTripPage() {
               <form onSubmit={handleSubmit} className="space-y-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Name</label>
+                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">{t("name", lang)}</label>
                     <input
                       type="text" required value={formState.name}
                       disabled={isLoading}
                       onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                       className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-4 text-stone-900 dark:text-on-surface focus:border-primary outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-on-surface/30 shadow-sm disabled:opacity-50"
-                      placeholder="Your name"
+                      placeholder={t("your_name", lang)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Email</label>
+                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">{t("email", lang)}</label>
                     <input
                       type="email" required value={formState.email}
                       disabled={isLoading}
                       onChange={(e) => setFormState({ ...formState, email: e.target.value })}
                       className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-4 text-stone-900 dark:text-on-surface focus:border-primary outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-on-surface/30 shadow-sm disabled:opacity-50"
-                      placeholder="email@example.com"
+                      placeholder={t("email_placeholder", lang)}
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Travelers</label>
+                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">{t("travelers", lang)}</label>
                     <select
                       value={formState.travelers}
                       disabled={isLoading}
@@ -182,12 +185,12 @@ export default function PlanTripPage() {
                       className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-4 text-stone-900 dark:text-on-surface focus:border-primary outline-none appearance-none shadow-sm disabled:opacity-50"
                     >
                       {[1,2,3,4,5,6,7,8,9, "10+"].map(n => (
-                        <option key={n} value={n} className="bg-white dark:bg-stone-900 text-stone-900 dark:text-white">{n} {n === 1 ? 'Person' : 'People'}</option>
+                        <option key={n} value={n} className="bg-white dark:bg-stone-900 text-stone-900 dark:text-white">{n} {n === 1 ? t("person", lang) : t("people", lang)}</option>
                       ))}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Trip Style</label>
+                    <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">{t("trip_style", lang)}</label>
                     <div className="flex flex-wrap gap-2">
                       {tripTypes.map(type => (
                         <button
@@ -209,7 +212,7 @@ export default function PlanTripPage() {
                         type="text" value={formState.customType}
                         disabled={isLoading}
                         onChange={(e) => setFormState({ ...formState, customType: e.target.value })}
-                        placeholder="Describe your trip style..."
+                        placeholder={t("describe_trip_style", lang)}
                         className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-stone-900 dark:text-on-surface focus:border-primary outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-on-surface/30 shadow-sm disabled:opacity-50 mt-2"
                       />
                     )}
@@ -217,7 +220,7 @@ export default function PlanTripPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Destinations</label>
+                  <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">{t("destinations_caps", lang)}</label>
                   <div className="flex flex-wrap gap-2">
                     {destinations.map(dest => (
                       <button
@@ -239,20 +242,20 @@ export default function PlanTripPage() {
                       type="text" value={formState.customDest}
                       disabled={isLoading}
                       onChange={(e) => setFormState({ ...formState, customDest: e.target.value })}
-                      placeholder="Enter your destination..."
+                      placeholder={t("enter_destination", lang)}
                       className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-stone-900 dark:text-on-surface focus:border-primary outline-none transition-all placeholder:text-stone-400 dark:placeholder:text-on-surface/30 shadow-sm disabled:opacity-50"
                     />
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">Additional Notes</label>
+                  <label className="text-[10px] uppercase tracking-widest text-on-surface/60 font-bold ml-1">{t("additional_notes", lang)}</label>
                   <textarea
                     rows={3} value={formState.message}
                     disabled={isLoading}
                     onChange={(e) => setFormState({ ...formState, message: e.target.value })}
                     className="w-full bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl px-5 py-4 text-stone-900 dark:text-on-surface focus:border-primary outline-none resize-none placeholder:text-stone-400 dark:placeholder:text-on-surface/30 shadow-sm disabled:opacity-50"
-                    placeholder="Tell us about your preferences..."
+                    placeholder={t("tell_us_preferences", lang)}
                   />
                 </div>
 
@@ -265,7 +268,7 @@ export default function PlanTripPage() {
                   disabled={isLoading}
                   className="w-full bg-primary text-on-primary font-bold py-5 rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? "Delivering Plan..." : "Request Itinerary"}
+                  {isLoading ? t("delivering_plan", lang) : t("request_itinerary", lang)}
                   {!isLoading && <span className="material-symbols-outlined">arrow_forward</span>}
                 </button>
               </form>

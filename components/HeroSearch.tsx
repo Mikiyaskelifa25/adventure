@@ -4,8 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Trip } from "@/lib/tripsData";
+import { useLanguage } from "@/lib/i18n/context";
+import { t } from "@/lib/i18n/translations";
 
 export default function HeroSearch({ trips }: { trips: Trip[] }) {
+  const { lang } = useLanguage();
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Trip[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -56,16 +59,16 @@ export default function HeroSearch({ trips }: { trips: Trip[] }) {
     <div className="w-full max-w-3xl relative" ref={searchRef}>
       <form 
         onSubmit={handleSearch}
-        className="bg-white/10 dark:bg-white/5 backdrop-blur-2xl border border-white/20 dark:border-white/10 rounded-full p-1.5 md:p-2 mb-10 flex items-center shadow-glass hover:shadow-premium transition-all duration-500 hover:border-white/40 group"
+        className="bg-white/10 dark:bg-white/5 backdrop-blur-2xl border border-white/20 dark:border-white/10 rounded-full p-1 md:p-2 mb-10 flex items-center shadow-glass hover:shadow-premium transition-all duration-500 hover:border-white/40 group"
       >
-        <div className="pl-4 md:pl-6 pr-2 md:pr-4">
+        <div className="pl-3 md:pl-6 pr-1 md:pr-4 shrink-0">
           <span className="material-symbols-outlined text-white/60 md:text-2xl text-xl group-hover:text-white transition-colors">
             search
           </span>
         </div>
         <input
-          className="bg-transparent border-none focus:ring-0 focus:outline-none text-white placeholder:text-white/60 w-full py-2.5 md:py-4 text-base md:text-lg"
-          placeholder="Search for your next adventure"
+          className="bg-transparent border-none focus:ring-0 focus:outline-none text-white placeholder:text-white/60 flex-1 min-w-0 py-2 md:py-4 text-sm md:text-lg"
+          placeholder={t("search_placeholder", lang)}
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -73,9 +76,9 @@ export default function HeroSearch({ trips }: { trips: Trip[] }) {
         />
         <button 
           type="submit"
-          className="bg-primary text-on-primary font-bold px-6 py-2.5 md:px-8 md:py-4 rounded-full mr-1 hover:scale-95 transition-all duration-300 shadow-lg shadow-primary/30 text-sm md:text-base"
+          className="bg-primary text-on-primary font-bold px-4 py-2 md:px-8 md:py-4 rounded-full shrink-0 whitespace-nowrap mr-0.5 md:mr-1 hover:scale-95 transition-all duration-300 shadow-lg shadow-primary/30 text-xs md:text-base"
         >
-          Explorer
+          {t("explorer", lang)}
         </button>
       </form>
 
@@ -116,7 +119,7 @@ export default function HeroSearch({ trips }: { trips: Trip[] }) {
               onClick={() => router.push(`/groups?search=${encodeURIComponent(query)}`)}
               className="text-primary font-label text-[10px] uppercase tracking-[0.2em] hover:underline"
             >
-              See all results for &quot;{query}&quot;
+              {t("see_all_results", lang)} &quot;{query}&quot;
             </button>
           </div>
         </div>

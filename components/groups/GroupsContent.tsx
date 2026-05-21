@@ -5,15 +5,18 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import AnimateOnScroll from "../AnimateOnScroll";
-import { Trip } from "@/lib/tripsData";
+import { Trip, getTripTitle, getTripDescription } from "@/lib/tripsData";
 import { JSONCollection } from "@/lib/jsonLoader";
-
-const tripFilters = ["All", "Group", "Family"];
+import { useLanguage } from "@/lib/i18n/context";
+import { t } from "@/lib/i18n/translations";
 
 export default function GroupsContent({ trips, collections }: { trips: Trip[], collections: JSONCollection[] }) {
+  const { lang } = useLanguage();
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const searchParams = useSearchParams();
+
+  const tripFilters = [t("all", lang), t("group", lang), t("family", lang)];
 
   useEffect(() => {
     const search = searchParams.get("search");
@@ -24,17 +27,17 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
     if (filter && tripFilters.includes(filter)) {
       setActiveFilter(filter);
     }
-  }, [searchParams]);
+  }, [searchParams, tripFilters]);
 
   const filteredTrips = trips.filter((trip) => {
     const query = searchQuery.toLowerCase();
     const matchesSearch = (
-      trip.title.toLowerCase().includes(query) ||
-      trip.description.toLowerCase().includes(query) ||
+      getTripTitle(trip, lang).toLowerCase().includes(query) ||
+      getTripDescription(trip, lang).toLowerCase().includes(query) ||
       trip.region.toLowerCase().includes(query)
     );
     
-    const matchesCategory = activeFilter === "All" || trip.type?.toLowerCase() === activeFilter.toLowerCase();
+    const matchesCategory = activeFilter === t("all", lang) || trip.type?.toLowerCase() === activeFilter.toLowerCase();
     
     return matchesSearch && matchesCategory;
   });
@@ -46,23 +49,23 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
         {/* Breadcrumbs & Title */}
         <div className="mb-8 md:mb-12">
           <div className="flex items-center gap-2 text-xs text-on-surface-variant/60 uppercase tracking-widest mb-5 flex-wrap">
-            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+            <Link href="/" className="hover:text-primary transition-colors">{t("home", lang)}</Link>
             <span className="material-symbols-outlined text-[10px]">chevron_right</span>
-            <span>Destinations</span>
+            <span>{t("destinations", lang)}</span>
             <span className="material-symbols-outlined text-[10px]">chevron_right</span>
-            <span className="text-primary">Ethiopia</span>
+            <span className="text-primary">{t("ethiopia", lang)}</span>
           </div>
 
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
             <div className="flex-1">
-              <h2 className="font-headline text-3xl md:text-5xl text-on-surface mb-3 font-bold">Groups Circuits</h2>
+              <h2 className="font-headline text-3xl md:text-5xl text-on-surface mb-3 font-bold">{t("group_circuits", lang)}</h2>
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="flex text-primary">
                   {[...Array(5)].map((_, i) => (
                     <span key={i} className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                   ))}
                 </div>
-                <span className="text-sm text-on-surface-variant font-label">4.8 (12 reviews) · {filteredTrips.length} Destinations</span>
+                <span className="text-sm text-on-surface-variant font-label">4.8 (12 {t("reviews", lang)}) · {filteredTrips.length} {t("destinations", lang)}</span>
               </div>
             </div>
 
@@ -73,7 +76,7 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
               </div>
               <input
                 type="text"
-                placeholder="Search destinations, regions..."
+                placeholder={t("search_destinations_placeholder", lang)}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-surface dark:bg-white/5 border border-outline/50 dark:border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all shadow-sm"
@@ -121,7 +124,7 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
                       <div className="col-span-2 row-span-2 relative overflow-hidden rounded-l-xl">
                         <Image
                           src={trip.images[0]}
-                          alt={trip.title}
+                          alt={getTripTitle(trip, lang)}
                           fill
                           sizes="(max-width: 768px) 60vw, 220px"
                           className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -130,12 +133,12 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
                       </div>
                       {trip.images[1] && (
                         <div className="relative overflow-hidden rounded-sm">
-                          <Image src={trip.images[1]} alt={trip.title} fill sizes="110px" className="object-cover" unoptimized />
+                          <Image src={trip.images[1]} alt={getTripTitle(trip, lang)} fill sizes="110px" className="object-cover" unoptimized />
                         </div>
                       )}
                       {trip.images[2] && (
                         <div className="relative overflow-hidden rounded-br-xl">
-                          <Image src={trip.images[2]} alt={trip.title} fill sizes="110px" className="object-cover" unoptimized />
+                          <Image src={trip.images[2]} alt={getTripTitle(trip, lang)} fill sizes="110px" className="object-cover" unoptimized />
                         </div>
                       )}
                     </div>
@@ -159,17 +162,17 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
                       </div>
 
                       <h3 className="font-headline text-xl md:text-2xl text-on-surface mb-3 group-hover:text-primary transition-colors duration-300 leading-snug">
-                        {trip.title}
+                        {getTripTitle(trip, lang)}
                       </h3>
 
                       <p className="text-on-surface-variant font-body text-sm leading-relaxed line-clamp-2 md:line-clamp-3">
-                        {trip.description}
+                        {getTripDescription(trip, lang)}
                       </p>
                     </div>
 
                     <div className="flex justify-end pt-5 mt-5 border-t border-outline/50 dark:border-white/10">
                       <span className="bg-primary text-on-primary px-6 py-2.5 rounded-full font-bold text-xs tracking-widest uppercase group-hover:scale-105 transition-transform shadow-lg shadow-primary/20 inline-block">
-                        View Details
+                        {t("view_details", lang)}
                       </span>
                     </div>
                   </div>
@@ -179,16 +182,16 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
           ) : (
             <div className="py-20 text-center bg-surface/30 dark:bg-white/[0.02] rounded-3xl border border-dashed border-outline/30 flex flex-col items-center">
               <span className="material-symbols-outlined text-5xl text-on-surface-variant/20 mb-4">search_off</span>
-              <h3 className="text-on-surface font-headline text-xl mb-2">No results found</h3>
-              <p className="text-on-surface-variant text-sm">We couldn&apos;t find any trips matching your criteria.</p>
+              <h3 className="text-on-surface font-headline text-xl mb-2">{t("no_results_found", lang)}</h3>
+              <p className="text-on-surface-variant text-sm">{t("no_results_description", lang)}</p>
               <button 
                 onClick={() => {
                   setSearchQuery("");
-                  setActiveFilter("All");
+                  setActiveFilter(t("all", lang));
                 }}
                 className="mt-6 text-primary font-label text-xs uppercase tracking-widest hover:underline flex items-center gap-2"
               >
-                Reset all filters
+                {t("reset_all_filters", lang)}
                 <span className="material-symbols-outlined text-sm">close</span>
               </button>
             </div>
@@ -201,16 +204,16 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
 
             {/* Experts */}
             <div>
-              <h4 className="font-headline text-xl md:text-2xl text-on-surface mb-6 font-bold border-b border-primary/20 pb-4">Our Local Experts</h4>
+              <h4 className="font-headline text-xl md:text-2xl text-on-surface mb-6 font-bold border-b border-primary/20 pb-4">{t("experts_title", lang)}</h4>
               <div className="flex flex-col sm:flex-row items-start gap-5 bg-surface/50 dark:bg-white/5 p-6 rounded-2xl border border-outline/50 dark:border-white/10 shadow-glass">
                 <div className="relative w-20 h-20 rounded-full overflow-hidden shrink-0 border-4 border-surface dark:border-surface-container">
                   <Image src="/aboutus.jpg" alt="Expert" fill sizes="80px" className="object-cover" />
                 </div>
                 <div>
-                  <h5 className="font-headline text-lg text-on-surface mb-1">Teddy &amp; the Aventure Team</h5>
-                  <p className="text-primary font-label text-xs uppercase tracking-widest mb-3">Ethiopia Specialists</p>
+                  <h5 className="font-headline text-lg text-on-surface mb-1">{t("expert_name", lang)}</h5>
+                  <p className="text-primary font-label text-xs uppercase tracking-widest mb-3">{t("expert_role", lang)}</p>
                   <p className="text-on-surface-variant text-sm leading-relaxed italic">
-                    &quot;We don&apos;t just guide you; we share our home and traditions with you. Every trail we walk has a story.&quot;
+                    {t("expert_quote", lang)}
                   </p>
                 </div>
               </div>
@@ -218,7 +221,7 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
 
             {/* Collections */}
             <div>
-              <h4 className="font-headline text-xl md:text-2xl text-on-surface mb-6 font-bold border-b border-primary/20 pb-4">Our Collectors Ethiopia</h4>
+              <h4 className="font-headline text-xl md:text-2xl text-on-surface mb-6 font-bold border-b border-primary/20 pb-4">{t("our_collections", lang)}</h4>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 {collections.map((collection) => (
                   <div key={collection.title} className="group relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer">
@@ -239,7 +242,7 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
                 ))}
               </div>
               <Link href="/groups" className="mt-8 text-primary font-label text-xs uppercase tracking-widest flex items-center gap-2 group">
-                View all collections
+                {t("view_all_collections", lang)}
                 <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </Link>
             </div>
@@ -249,17 +252,17 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
           <div className="space-y-8">
             <div className="bg-surface/50 dark:bg-white/[0.03] text-on-surface p-8 rounded-3xl relative overflow-hidden group border border-outline/50 dark:border-white/5 shadow-glass">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-primary/20 transition-all duration-700" />
-              <h4 className="font-headline text-xl mb-3 leading-tight text-on-surface">plan trip <br /><span className="italic font-normal">for you.</span></h4>
+              <h4 className="font-headline text-xl mb-3 leading-tight text-on-surface">{t("plan_trip_for_you", lang)}</h4>
               <p className="text-on-surface-variant font-body text-sm mb-6 leading-relaxed">
-                Don&apos;t find the perfect dates? Our specialists create a custom journey for you.
+                {t("custom_journey_text", lang)}
               </p>
               <button className="w-full bg-primary text-on-primary py-3.5 rounded-xl font-bold text-sm tracking-widest uppercase hover:scale-[1.02] transition-all shadow-lg shadow-primary/20">
-                Start Plan
+                {t("start_plan", lang)}
               </button>
             </div>
 
             <div className="bg-surface/50 dark:bg-white/5 p-6 rounded-3xl border border-outline/50 dark:border-white/10 shadow-glass">
-              <h4 className="font-headline text-lg text-on-surface mb-5">Need help?</h4>
+              <h4 className="font-headline text-lg text-on-surface mb-5">{t("need_help", lang)}</h4>
               <div className="space-y-5">
                 <a href="https://wa.me/251911603027" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-on-surface-variant hover:text-primary transition-colors">
                   <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "#25D366" }}>

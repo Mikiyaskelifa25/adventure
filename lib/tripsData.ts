@@ -1,3 +1,5 @@
+import type { Language } from "./i18n/translations";
+
 export type TripDay = {
   day: number;
   title: string;
@@ -17,6 +19,7 @@ export type Trip = {
   id: number;
   slug: string;
   title: string;
+  title_fr?: string;
   duration: string;
   daysCount: number;
   price: string;
@@ -29,6 +32,7 @@ export type Trip = {
   heroImage: string;
   bannerImageUrl?: string;
   description: string;
+  description_fr?: string;
   longDescription: string;
   highlights: string[];
   itinerary: TripDay[];
@@ -36,17 +40,31 @@ export type Trip = {
   included: string[];
   notIncluded: string[];
   region: string;
+  region_fr?: string;
   isNew: boolean;
   category: "Group Trip" | "Daily" | "Private Trip" | "Tailor-made";
   type: string | null;
   displayOrder: number;
 };
 
+export function getTripTitle(trip: Trip, lang: Language): string {
+  return lang === "fr" && trip.title_fr ? trip.title_fr : trip.title;
+}
+
+export function getTripDescription(trip: Trip, lang: Language): string {
+  return lang === "fr" && trip.description_fr ? trip.description_fr : trip.description;
+}
+
+export function getTripRegion(trip: Trip, lang: Language): string {
+  return lang === "fr" && trip.region_fr ? trip.region_fr : trip.region;
+}
+
 export const trips: Trip[] = [
   {
     id: 1,
     slug: "highlands-deserts-traditions",
     title: "In the heart of Abyssinian highlands, deserts and traditions",
+    title_fr: "Au cœur des hauts plateaux d'Abyssinie, des déserts et des traditions",
     duration: "15 days",
     daysCount: 15,
     price: "€2,890",
@@ -59,6 +77,8 @@ export const trips: Trip[] = [
     heroImage: "/pic5.JPG",
     description:
       "Discover the ancestral lands of the Amhara people, the lunar landscapes of Danakil and the spiritual depth of Lalibela.",
+    description_fr:
+      "Découvrez les terres ancestrales du peuple Amhara, les paysages lunaires du Danakil et la profondeur spirituelle de Lalibela.",
     longDescription:
       "This extraordinary journey threads through the heart of Ethiopia — from the imperial castles of Gondar to the rock-hewn churches of Lalibela, across the dramatic Simien mountains and deep into the Afar depression. You will travel alongside local guides who are passionate about sharing their heritage, sleep in authentic lodges, and witness landscapes unlike anywhere else on Earth. This is not a packaged tour; this is a living story.",
     highlights: [
@@ -102,6 +122,7 @@ export const trips: Trip[] = [
       "Visa fees (~$50)",
     ],
     region: "Northern & Eastern Ethiopia",
+    region_fr: "Éthiopie du Nord et de l'Est",
     isNew: false,
     category: "Group Trip",
     type: "Group",
@@ -111,6 +132,7 @@ export const trips: Trip[] = [
     id: 2,
     slug: "omo-valley-southern-tribes",
     title: "Prophets of the Omo Valley and Southern tribes",
+    title_fr: "Prophètes de la vallée de l'Omo et tribus du Sud",
     duration: "12 days",
     daysCount: 12,
     price: "€3,120",
@@ -123,6 +145,8 @@ export const trips: Trip[] = [
     heroImage: "/pic4.jpg",
     description:
       "Immerse yourself in the unique cultures of the Omo Valley, where tradition meets ancient rituals in a breathtaking setting.",
+    description_fr:
+      "Immergez-vous dans les cultures uniques de la vallée de l'Omo, où la tradition rencontre les rituels anciens dans un cadre à couper le souffle.",
     longDescription:
       "The Omo Valley is one of Africa's last great frontiers for cultural exploration. Here, dozens of distinct tribes — the Hamer, Mursi, Karo, Dasenech — have maintained traditions unchanged for millennia. This journey takes you deep into this living museum, attending ceremonies, visiting markets, and camping under skies of extraordinary clarity. It is an experience that permanently changes the way you see humanity.",
     highlights: [
@@ -163,6 +187,7 @@ export const trips: Trip[] = [
       "Ethiopian visa",
     ],
     region: "Southern Ethiopia – Omo Valley",
+    region_fr: "Éthiopie du Sud – Vallée de l'Omo",
     isNew: true,
     category: "Private Trip",
     type: null,
@@ -172,6 +197,7 @@ export const trips: Trip[] = [
     id: 3,
     slug: "salt-caravans-danakil",
     title: "The Salt Caravans and Danakil Depression",
+    title_fr: "Les caravanes de sel et la dépression du Danakil",
     duration: "10 days",
     daysCount: 10,
     price: "€2,450",
@@ -184,6 +210,8 @@ export const trips: Trip[] = [
     heroImage: "/pic2.JPG",
     description:
       "A journey to the lowest point on Earth, witnessing the incredible salt caravans and the volcanic wonders of Erta Ale.",
+    description_fr:
+      "Un voyage vers le point le plus bas de la Terre, découvrant les incroyables caravanes de sel et les merveilles volcaniques de l'Erta Ale.",
     longDescription:
       "The Danakil Depression is not a destination for the faint-hearted. It is one of the remotest and geologically most active regions on the planet — a landscape of salt flats, sulphur springs, and permanent lava lakes that feels like another world entirely. The Afar people who call this inferno home are proud and welcoming. To witness the ancient salt caravans, hundreds of camels crossing the white desert at dawn, is one of the great sights remaining in human civilisation.",
     highlights: [
@@ -222,6 +250,7 @@ export const trips: Trip[] = [
       "Visa on arrival",
     ],
     region: "Afar Region – Danakil Depression",
+    region_fr: "Région Afar – Dépression du Danakil",
     isNew: false,
     category: "Tailor-made",
     type: "Family",

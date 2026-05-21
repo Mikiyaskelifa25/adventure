@@ -3,6 +3,7 @@ import "./globals.css";
 import EthiopianPatternBg from "@/components/EthiopianPatternBg";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/lib/i18n/context";
+import { getServerLang } from "@/lib/i18n/server";
 import { Geist, Noto_Serif, Manrope } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -95,14 +96,16 @@ export const metadata: Metadata = {
   category: "travel",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const lang = await getServerLang();
+
   return (
     <html 
-      lang="en" 
+      lang={lang} 
       suppressHydrationWarning 
     >
       <head>

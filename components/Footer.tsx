@@ -1,19 +1,25 @@
+"use client";
+
 import Link from "next/link";
-
-const quickLinks = [
-  { label: "Destinations", href: "/#destinations" },
-  { label: "Groups", href: "/groups" },
-  { label: "About Us", href: "/#about-us" },
-  { label: "Contact", href: "/#contact" },
-];
-
-const legalLinks = [
-  { label: "Privacy Policy", href: "#" },
-  { label: "Terms & Conditions", href: "#" },
-  { label: "Press Kit", href: "#" },
-];
+import { useLanguage } from "@/lib/i18n/context";
+import { t } from "@/lib/i18n/translations";
 
 export default function Footer() {
+  const { lang } = useLanguage();
+
+  const quickLinks = [
+    { label: t("destinations", lang), href: "/#destinations" },
+    { label: t("group_circuits", lang), href: "/groups" },
+    { label: t("about", lang), href: "/#about-us" },
+    { label: t("contact", lang), href: "/#contact" },
+  ];
+
+  const legalLinks = [
+    { label: t("privacy_policy", lang), href: "#" },
+    { label: t("terms_conditions", lang), href: "#" },
+    { label: t("press_kit", lang), href: "#" },
+  ];
+
   return (
     <footer className="w-full border-t border-outline/30 dark:border-white/5 bg-surface pt-16 md:pt-24 pb-12 px-6 md:px-12 relative z-10 overflow-hidden transition-colors">
       {/* Decorative Blur */}
@@ -25,16 +31,16 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <Link href="/" className="font-headline text-[clamp(1.125rem,3.5cqi,1.75rem)] text-on-surface uppercase tracking-tighter mb-6 block hover:opacity-80 transition-opacity">
-              Adventure Ethiopia Travel
+              {t("adventure_ethiopia_travel", lang)}
             </Link>
             <p className="text-on-surface-variant font-body text-sm leading-relaxed mb-8 max-w-xs">
-              Specialists in curated, authentic journeys across the Ethiopian highlands. From the Danakil to the Omo Valley, we make every journey an adventure.
+              {t("footer_description", lang)}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-headline text-lg text-on-surface mb-6 font-bold">Explore</h4>
+            <h4 className="font-headline text-lg text-on-surface mb-6 font-bold">{t("explore", lang)}</h4>
             <ul className="space-y-4">
               {quickLinks.map((link) => (
                 <li key={link.label}>
@@ -51,7 +57,7 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="font-headline text-lg text-on-surface mb-6 font-bold">Legal</h4>
+            <h4 className="font-headline text-lg text-on-surface mb-6 font-bold">{t("legal", lang)}</h4>
             <ul className="space-y-4">
               {legalLinks.map((link) => (
                 <li key={link.label}>
@@ -68,9 +74,9 @@ export default function Footer() {
 
           {/* Newsletter / Contact mini */}
           <div>
-            <h4 className="font-headline text-lg text-on-surface mb-6 font-bold">Need help?</h4>
+            <h4 className="font-headline text-lg text-on-surface mb-6 font-bold">{t("need_help", lang)}</h4>
             <p className="text-on-surface-variant font-body text-sm mb-6">
-              Our specialists are ready to help you plan your next adventure.
+              {t("our_specialists_ready", lang)}
             </p>
             <div className="flex flex-col gap-4">
               <a
@@ -106,7 +112,7 @@ export default function Footer() {
               </a>
             </div>
             <p className="text-on-surface-variant font-body text-[10px] uppercase tracking-widest opacity-60 mt-4">
-              International & Local Support
+              {t("international_local_support", lang)}
             </p>
           </div>
         </div>
@@ -114,7 +120,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-12 border-t border-outline/30 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-on-surface-variant/40 font-body text-[10px] uppercase tracking-[0.3em]">
-            © 2024 Adventure Ethiopia Travel. Member of Ethiopia Tourism Board.
+            {t("copyright", lang)}
           </p>
           <div className="flex gap-8 text-on-surface-variant/40 font-body text-[10px] uppercase tracking-widest">
             <a 
@@ -123,7 +129,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="hover:text-primary transition-colors"
             >
-              Made by Mikiyas Kelifa
+              {t("made_by", lang)}
             </a>
           </div>
         </div>
