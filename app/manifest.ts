@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Aventure en Abyssinie – Ethiopia Tour & Travel",
+    name: "Adventure in Abyssinie – Ethiopia Tour & Travel",
     short_name: "Aventure Abyssinie",
     description:
       "Discover authentic Ethiopia tours with expert guides. Curated itineraries from Danakil to Lalibela.",

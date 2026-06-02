@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   /* @ts-ignore */
   allowedDevOrigins: ["192.168.8.111"],
   images: {
-    qualities: [75],
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",

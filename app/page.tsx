@@ -7,8 +7,12 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import { getToursFromSupabase } from "@/lib/supabaseData";
 
+export const metadata = {
+  title: "Adventure in Ethiopia",
+};
+
 export default async function Home() {
-  const trips = await getToursFromSupabase();
+  const trips = await getToursFromSupabase(true);
 
   return (
     <>
@@ -16,11 +20,11 @@ export default async function Home() {
       <main>
         <HeroSection trips={trips} />
         <AboutSection />
-        <EditorialSection />
+        <EditorialSection trips={trips} />
         <TestimonialsSection />
         <ContactSection />
+        <Footer />
       </main>
-      <Footer />
     </>
   );
 }

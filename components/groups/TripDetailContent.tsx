@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Trip, getTripTitle, getTripDescription, getTripRegion } from "@/lib/tripsData";
 import { useLanguage } from "@/lib/i18n/context";
-import { t } from "@/lib/i18n/translations";
+import { t, type Language } from "@/lib/i18n/translations";
 import AnimateOnScroll from "../AnimateOnScroll";
 import TourMap from "./TourMap";
 
@@ -18,7 +18,7 @@ const experienceIcons = [
   { icon: "restaurant", key: "cuisine" },
 ];
 
-function getActivityIcon(name: string, lang: "en" | "fr") {
+function getActivityIcon(name: string, lang: Language) {
   const lower = name.toLowerCase();
   if (lower.includes("morning") || lower.includes("sunrise") || lower.includes("dawn")) {
     return { icon: "light_mode", color: "text-primary", label: t("morning", lang) };
@@ -75,7 +75,7 @@ export default function TripDetailContent({
             priority
             sizes="100vw"
             className="object-cover object-center"
-            unoptimized
+            
           />
         </section>
       )}
@@ -137,7 +137,7 @@ export default function TripDetailContent({
                       fill
                       sizes="(max-width: 1024px) 75vw, 50vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-700"
-                      unoptimized
+                      
                     />
                   </div>
                   {trip.images.slice(0, 2).map((img, i) => (
@@ -152,7 +152,7 @@ export default function TripDetailContent({
                         fill
                         sizes="25vw"
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        unoptimized
+                        
                       />
                       {i === 1 && (
                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center hover:bg-black/60 transition-colors">
@@ -561,7 +561,7 @@ export default function TripDetailContent({
               alt={getTripTitle(trip, lang)}
               fill
               className="object-contain"
-              unoptimized
+              
               priority
             />
           </div>

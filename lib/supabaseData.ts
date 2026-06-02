@@ -114,7 +114,7 @@ function mapTour(tour: SupabaseTour, index: number): Trip {
       "Tipping (optional)",
     ],
     region: tour.region || "Ethiopia",
-    region_fr: tour.region_fr,
+    region_fr: (tour as any).region_fr,
     isNew: index === 0,
     category: mapCategory(tour.category),
     type: tour.type,
@@ -122,10 +122,14 @@ function mapTour(tour: SupabaseTour, index: number): Trip {
   };
 }
 
-export async function getToursFromSupabase(): Promise<Trip[]> {
+export async function getToursFromSupabase(isLightweight = false): Promise<Trip[]> {
+  const query = isLightweight 
+    ? "id, title, title_fr, category, duration, hero_image, banner_image, region, display_order, type, description, description_fr"
+    : "*";
+
   const { data, error } = await supabase
     .from("tours")
-    .select("*")
+    .select(query)
     .order("display_order", { ascending: true });
 
   if (error) {
@@ -133,7 +137,7 @@ export async function getToursFromSupabase(): Promise<Trip[]> {
     return [];
   }
 
-  return (data || []).map((tour: unknown, index: number) =>
+  return (data || []).map((tour: any, index: number) =>
     mapTour(tour as SupabaseTour, index)
   );
 }

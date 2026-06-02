@@ -18,7 +18,7 @@ export async function generateMetadata({
   const trip = await getTourBySlugFromSupabase(slug);
   if (!trip) return { title: "Trip Not Found" };
   return {
-    title: `${trip.title} | Aventure en Abyssinie`,
+    title: `${trip.title} | Adventure in Abyssinie`,
     description: trip.description,
   };
 }

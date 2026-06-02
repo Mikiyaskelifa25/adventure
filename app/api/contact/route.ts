@@ -170,7 +170,7 @@ async function buildPDF(data: {
   page.drawRectangle({ x: 0, y: 0, width: 8, height, color: GOLD });
   
   // ── Subtle watermark in the background ──
-  page.drawText("AVENTURE EN ABYSSINIE", {
+  page.drawText("ADVENTURE IN ABYSSINIE", {
     x: width / 2 - 150,
     y: height / 2,
     size: 40,
@@ -196,7 +196,7 @@ async function buildPDF(data: {
   }
 
   // Brand Name
-  page.drawText("AVENTURE EN ABYSSINIE", {
+  page.drawText("ADVENTURE IN ABYSSINIE", {
     x: MARGIN + 90,
     y: HEADER_Y - 15,
     size: 20,

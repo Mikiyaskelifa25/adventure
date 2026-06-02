@@ -17,7 +17,7 @@ export default function TestimonialsSection() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
           <AnimateOnScroll animation="fade-right">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-headline font-bold text-on-surface tracking-tight">
-              {t("what_they_say", lang)} <br /> <span className="text-primary">{t("about_us", lang)}</span>
+              {t("what they say", lang)} <br /> <span className="text-primary">{t("about us", lang)}</span>
             </h2>
           </AnimateOnScroll>
           

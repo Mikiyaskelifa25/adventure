@@ -21,9 +21,6 @@ export default function TestimonialsPage() {
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-headline font-bold text-on-surface mb-6 tracking-tight leading-tight">
               {t("our_testimonials", lang)}
             </h1>
-            <p className="max-w-2xl mx-auto text-on-surface-variant text-lg md:text-xl leading-relaxed">
-              {t("testimonials_description", lang)}
-            </p>
           </AnimateOnScroll>
         </section>
 

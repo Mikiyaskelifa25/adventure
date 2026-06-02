@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og"
 
-export const alt = "Aventure en Abyssinie – Ethiopia Tours"
+export const alt = "Adventure in Abyssinie – Ethiopia Tours"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
@@ -67,7 +67,7 @@ export default async function Image() {
               marginBottom: "16px",
             }}
           >
-            Aventure en
+            Adventure in
             <br />
             Abyssinie
           </h1>

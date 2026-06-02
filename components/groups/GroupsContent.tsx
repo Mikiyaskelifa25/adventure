@@ -128,17 +128,16 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
                           fill
                           sizes="(max-width: 768px) 60vw, 220px"
                           className="object-cover group-hover:scale-105 transition-transform duration-700"
-                          unoptimized
                         />
                       </div>
                       {trip.images[1] && (
                         <div className="relative overflow-hidden rounded-sm">
-                          <Image src={trip.images[1]} alt={getTripTitle(trip, lang)} fill sizes="110px" className="object-cover" unoptimized />
+                          <Image src={trip.images[1]} alt={getTripTitle(trip, lang)} fill sizes="110px" className="object-cover"  />
                         </div>
                       )}
                       {trip.images[2] && (
                         <div className="relative overflow-hidden rounded-br-xl">
-                          <Image src={trip.images[2]} alt={getTripTitle(trip, lang)} fill sizes="110px" className="object-cover" unoptimized />
+                          <Image src={trip.images[2]} alt={getTripTitle(trip, lang)} fill sizes="110px" className="object-cover"  />
                         </div>
                       )}
                     </div>
@@ -231,7 +230,7 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
                       fill
                       sizes="(max-width: 640px) 90vw, 33vw"
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
-                      unoptimized
+                      
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
                     <div className="absolute bottom-5 left-5 text-on-surface">

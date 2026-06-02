@@ -6,7 +6,7 @@ import { getToursFromSupabase } from "@/lib/supabaseData";
 import { Suspense } from "react";
 
 export const metadata = {
-  title: "All Itineraries | Aventure en Abyssinie",
+  title: "All Itineraries | Adventure in Abyssinie",
   description:
     "Browse all our curated Ethiopian itineraries. Find the perfect adventure across Ethiopia's historic and natural wonders.",
 };

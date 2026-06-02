@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import HeroSearch from "./HeroSearch";
 import { Trip } from "@/lib/tripsData";
-import { useLanguage } from "@/lib/i18n/context";
 import { t } from "@/lib/i18n/translations";
+import { useLanguage } from "@/lib/i18n/context";
 
 export default function HeroSection({ trips }: { trips: Trip[] }) {
   const { lang } = useLanguage();
@@ -24,7 +24,7 @@ export default function HeroSection({ trips }: { trips: Trip[] }) {
           className="w-full h-full object-cover"
           fill
           priority
-          src="/back.png"
+          src="/back.webp"
           sizes="100vw"
         />
         <div className="absolute inset-0 hero-gradient"></div>

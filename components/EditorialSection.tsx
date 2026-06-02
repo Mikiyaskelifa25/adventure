@@ -1,23 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import DestinationCard from "./DestinationCard";
 import AnimateOnScroll from "./AnimateOnScroll";
 import { Trip, getTripTitle } from "@/lib/tripsData";
 import { useLanguage } from "@/lib/i18n/context";
 import { t } from "@/lib/i18n/translations";
-import { getToursFromSupabase } from "@/lib/supabaseData";
 
-export default function EditorialSection() {
+export default function EditorialSection({ trips }: { trips: Trip[] }) {
   const { lang } = useLanguage();
-  const [tours, setTours] = useState<Trip[]>([]);
 
-  useEffect(() => {
-    getToursFromSupabase().then(setTours);
-  }, []);
-
-  const destinations = tours.map((tour, index) => ({
+  const destinations = trips.map((tour, index) => ({
     region: tour.region,
     title: getTripTitle(tour, lang),
     imageUrl: tour.heroImage,

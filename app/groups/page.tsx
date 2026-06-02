@@ -6,7 +6,7 @@ import { getToursFromSupabase, getCollectionsFromSupabase } from "@/lib/supabase
 import { Suspense } from "react";
 
 export const metadata = {
-  title: "Ethiopia Group Tours | Aventure en Abyssinie",
+  title: "Ethiopia Group Tours | Adventure in Abyssinie",
   description:
     "Discover Ethiopia with our curated group circuits. Explore ancient churches, dramatic landscapes, and vibrant cultures.",
 };

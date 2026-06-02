@@ -29,11 +29,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aventure-abyssinie
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Aventure en Abyssinie | Ethiopia Tour & Travel Specialist",
-    template: "%s | Aventure en Abyssinie",
+    default: "Adventure in Abyssinie | Ethiopia Tour & Travel Specialist",
+    template: "%s | Adventure in Abyssinie",
   },
   description:
-    "Discover authentic Ethiopia tours with Aventure en Abyssinie. Expert guides, curated itineraries from the Danakil Depression to Lalibela. Book your adventure today.",
+    "Discover authentic Ethiopia tours with Adventure in Abyssinie. Expert guides, curated itineraries from the Danakil Depression to Lalibela. Book your adventure today.",
   keywords: [
     "Ethiopia tours",
     "Ethiopia travel",
@@ -46,9 +46,9 @@ export const metadata: Metadata = {
     "Adventure travel Ethiopia",
     "Ethiopia vacation packages",
   ],
-  authors: [{ name: "Aventure en Abyssinie" }],
-  creator: "Aventure en Abyssinie",
-  publisher: "Aventure en Abyssinie",
+  authors: [{ name: "Adventure in Abyssinie" }],
+  creator: "Adventure in Abyssinie",
+  publisher: "Adventure in Abyssinie",
   formatDetection: {
     telephone: true,
     email: true,
@@ -57,27 +57,30 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "Aventure en Abyssinie",
-    title: "Aventure en Abyssinie | Ethiopia Tour & Travel Specialist",
+    siteName: "Adventure in Abyssinie",
+    title: "Adventure in Abyssinie | Ethiopia Tour & Travel Specialist",
     description:
-      "Discover authentic Ethiopia tours with Aventure en Abyssinie. Expert guides, curated itineraries from the Danakil Depression to Lalibela.",
+      "Discover authentic Ethiopia tours with Adventure in Abyssinie. Expert guides, curated itineraries from the Danakil Depression to Lalibela.",
     url: BASE_URL,
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Aventure en Abyssinie – Ethiopia Tours",
+        alt: "Adventure in Abyssinie – Ethiopia Tours",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Aventure en Abyssinie | Ethiopia Tour & Travel Specialist",
+    title: "Adventure in Abyssinie | Ethiopia Tour & Travel Specialist",
     description:
-      "Discover authentic Ethiopia tours with Aventure en Abyssinie. Expert guides, curated itineraries.",
+      "Discover authentic Ethiopia tours with Adventure in Abyssinie. Expert guides, curated itineraries.",
     images: ["/og-image.jpg"],
     creator: "@aventureabyssinie",
+  },
+  icons: {
+    icon: "/logo.ico",
   },
   robots: {
     index: true,
@@ -110,8 +113,23 @@ export default async function RootLayout({
     >
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
-          rel="stylesheet"
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+        />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              var l=document.createElement('link');
+              l.rel='stylesheet';
+              l.href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
+              document.head.appendChild(l);
+            `,
+          }}
         />
       </head>
       <body className={cn(
@@ -126,7 +144,7 @@ export default async function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "TravelAgency",
-              name: "Aventure en Abyssinie",
+              name: "Adventure in Abyssinie",
               description:
                 "Specialists in curated, authentic journeys across the Ethiopian highlands. From the Danakil to the Omo Valley.",
               url: BASE_URL,

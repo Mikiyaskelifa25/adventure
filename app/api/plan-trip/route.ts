@@ -145,7 +145,7 @@ async function buildPDF(data: {
     page.drawText("*", { x: MARGIN, y: HEADER_Y - 40, size: 50, font: fontTitle, color: GOLD });
   }
 
-  page.drawText("AVENTURE EN ABYSSINIE", {
+  page.drawText("ADVENTURE IN ABYSSINIE", {
     x: MARGIN + 100,
     y: HEADER_Y - 20,
     size: 24,
@@ -215,7 +215,7 @@ async function buildPDF(data: {
   const FOOT_Y = 60;
   page.drawRectangle({ x: 0, y: 0, width, height: FOOT_Y, color: DARK });
   
-  const footText = "AVENTURE EN ABYSSINIE  |  CONFIDENTIAL PROPOSAL  |  (c) 2024";
+  const footText = "ADVENTURE IN ABYSSINIE  |  CONFIDENTIAL PROPOSAL  |  (c) 2024";
   const footW = fontBold.widthOfTextAtSize(footText, 7);
   page.drawText(footText, {
     x: (width - footW) / 2,
