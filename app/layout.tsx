@@ -24,7 +24,7 @@ const manrope = Manrope({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aventure-abyssinie.com";
+const BASE_URL = "https://adventureinnethiopia.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
