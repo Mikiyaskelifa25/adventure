@@ -15,6 +15,7 @@ export default function ItinerariesHero() {
           className="w-full h-full object-cover"
           fill
           priority
+          quality={60}
           src="/pic3.JPG"
           sizes="100vw"
         />

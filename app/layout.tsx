@@ -7,6 +7,8 @@ import { LanguageProvider } from "@/lib/i18n/context";
 import { getServerLang } from "@/lib/i18n/server";
 import { Geist, Noto_Serif, Manrope } from "next/font/google";
 import { cn } from "@/lib/utils";
+import JsonLd from "@/components/JsonLd";
+import { buildTravelAgencySchema, buildWebSiteSchema } from "@/lib/jsonld";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -34,70 +36,110 @@ const siteMeta = {
       template: "%s | Adventure in Abyssinie",
     },
     description:
-      "Discover authentic Ethiopia tours with Adventure in Abyssinie. Expert guides, curated itineraries from the Danakil Depression to Lalibela. Book your adventure today.",
+      "Book authentic Ethiopia tours with Adventure in Abyssinie — expert French & English-speaking guides. Danakil Depression expedition, Lalibela rock-hewn churches, Omo Valley tribal tours & Simien Mountains trekking. Small groups, tailor-made itineraries from Addis Ababa.",
     keywords: [
-      "Ethiopia tours",
-      "Ethiopia travel",
-      "Abyssinia tours",
-      "Lalibela churches",
-      "Danakil Depression",
-      "Omo Valley tours",
-      "Simien Mountains trekking",
-      "Ethiopia cultural tours",
-      "Adventure travel Ethiopia",
-      "Ethiopia vacation packages",
+      // ── High-intent transactional ──────────────────────────────────────────
+      "Ethiopia tour packages 2025",
+      "Ethiopia group tour",
+      "private Ethiopia tour operator",
+      "tailor-made Ethiopia itinerary",
+      "book Ethiopia tour from Addis Ababa",
+      // ── Destination-specific (high volume) ────────────────────────────────
+      "Danakil Depression tour",
+      "Erta Ale volcano expedition",
+      "Lalibela rock-hewn churches tour",
+      "Omo Valley tribal tour",
+      "Simien Mountains trekking Ethiopia",
+      "Gondar castle tour Ethiopia",
+      // ── Niche differentiators (low competition, high conversion) ──────────
+      "French-speaking Ethiopia guide",
+      "French-speaking tour operator Ethiopia",
+      "small group Ethiopia adventure",
+      "Timkat festival Ethiopia tour",
+      "Hamer bull-jumping ceremony tour",
+      "Dallol hydrothermal fields tour",
+      // ── Informational (blog / content) ────────────────────────────────────
+      "best time to visit Ethiopia",
+      "Ethiopia cultural heritage tours",
+      "Ethiopia UNESCO World Heritage sites",
+      "adventure travel Ethiopia Africa",
     ],
-    ogTitle: "Adventure in Abyssinie | Ethiopia Tour & Travel Specialist",
+    ogTitle: "Adventure in Abyssinie | Expert-Led Ethiopia Tours",
     ogDescription:
-      "Discover authentic Ethiopia tours with Adventure in Abyssinie. Expert guides, curated itineraries from the Danakil Depression to Lalibela.",
+      "Authentic Ethiopia tours with expert French & English-speaking guides. Danakil Depression, Lalibela, Omo Valley & Simien Mountains. Small groups & tailor-made itineraries.",
     ogSiteName: "Adventure in Abyssinie",
   },
   fr: {
     title: {
-      default: "Aventure en Abyssinie | Spécialiste des Voyages en Éthiopie",
+      default: "Aventure en Abyssinie | Spécialiste Voyages Éthiopie Francophones",
       template: "%s | Aventure en Abyssinie",
     },
     description:
-      "Découvrez des circuits authentiques en Éthiopie avec Adventure in Abyssinie. Guides experts, itinéraires sur mesure du Dallol à Lalibela. Réservez votre aventure dès aujourd'hui.",
+      "Circuits authentiques en Éthiopie avec guide francophone expert. Dépression du Danakil, églises de Lalibela, tribus de la vallée de l'Omo, trek Simien. Petits groupes et voyages sur mesure depuis Addis-Abeba.",
     keywords: [
-      "circuits Éthiopie",
-      "voyage Éthiopie",
-      "tours Abyssinie",
-      "églises Lalibela",
-      "dépression Danakil",
-      "vallée de l'Omo",
-      "trek montagnes Simien",
-      "voyage culturel Éthiopie",
-      "aventure Éthiopie",
-      "séjour Éthiopie",
+      // ── Transactionnel haute intention ────────────────────────────────────
+      "circuit Éthiopie 2025",
+      "voyage organisé Éthiopie",
+      "guide francophone Éthiopie",
+      "agence de voyage Éthiopie francophone",
+      "voyage sur mesure Éthiopie",
+      "séjour Éthiopie petit groupe",
+      // ── Destination (fort volume) ─────────────────────────────────────────
+      "circuit dépression du Danakil",
+      "Erta Ale volcan expédition",
+      "visite églises Lalibela",
+      "tour vallée de l'Omo tribus",
+      "trek montagnes du Simien",
+      "château de Gondar visite",
+      // ── Niche différenciateurs (faible concurrence) ───────────────────────
+      "guide parlant français Éthiopie",
+      "cérémonie Timkat Éthiopie",
+      "festival Meskel Addis-Abeba",
+      "saut du taureau Hamer Éthiopie",
+      // ── Informatif ────────────────────────────────────────────────────────
+      "meilleure période visiter Éthiopie",
+      "patrimoine UNESCO Éthiopie",
+      "voyage culturel Éthiopie Afrique",
     ],
-    ogTitle: "Aventure en Abyssinie | Spécialiste des Voyages en Éthiopie",
+    ogTitle: "Aventure en Abyssinie | Circuits Éthiopie avec Guide Francophone",
     ogDescription:
-      "Découvrez des circuits authentiques en Éthiopie avec Adventure in Abyssinie. Guides experts, itinéraires sur mesure du Dallol à Lalibela.",
+      "Circuits authentiques en Éthiopie avec guide francophone expert. Danakil, Lalibela, vallée de l'Omo & Simien. Petits groupes & itinéraires sur mesure.",
     ogSiteName: "Aventure en Abyssinie",
   },
   ru: {
     title: {
-      default: "Adventure in Abyssinie | Туроператор по Эфиопии",
+      default: "Adventure in Abyssinie | Туры в Эфиопию — Эксперт по Абиссинии",
       template: "%s | Adventure in Abyssinie",
     },
     description:
-      "Откройте для себя подлинные туры по Эфиопии с Adventure in Abyssinie. Опытные гиды, индивидуальные маршруты от впадины Данакиль до Лалибэлы. Забронируйте приключение сегодня.",
+      "Авторские туры по Эфиопии с опытными гидами. Экспедиция в Долину Данакиль, церкви Лалибэлы, племена долины Омо, трекинг в горах Симиен. Малые группы и индивидуальные маршруты из Аддис-Абебы.",
     keywords: [
-      "туры Эфиопия",
-      "путешествие Эфиопия",
-      "Абиссиния туры",
-      "церкви Лалибэла",
-      "впадина Данакиль",
-      "долина Омо",
+      // ── Транзакционные (высокое намерение) ───────────────────────────────
+      "туры в Эфиопию 2025",
+      "туроператор по Эфиопии",
+      "индивидуальный тур Эфиопия",
+      "групповой тур Эфиопия",
+      "заказать тур в Эфиопию",
+      // ── Направления (высокий объём) ──────────────────────────────────────
+      "тур в долину Данакиль",
+      "вулкан Эрта Але экспедиция",
+      "церкви Лалибэлы тур",
+      "долина Омо племена тур",
       "трекинг горы Симиен",
-      "культурные туры Эфиопия",
-      "приключения Эфиопия",
-      "отдых Эфиопия",
+      "замки Гондэра Эфиопия",
+      // ── Нишевые дифференциаторы ───────────────────────────────────────────
+      "гид на русском языке Эфиопия",
+      "малая группа Эфиопия приключения",
+      "фестиваль Тимкат Эфиопия",
+      "обряд прыжка через быков Хамер",
+      // ── Информационные ───────────────────────────────────────────────────
+      "лучшее время для посещения Эфиопии",
+      "объекты ЮНЕСКО Эфиопия",
+      "культурный туризм Эфиопия Африка",
     ],
-    ogTitle: "Adventure in Abyssinie | Туроператор по Эфиопии",
+    ogTitle: "Adventure in Abyssinie | Авторские Туры по Эфиопии",
     ogDescription:
-      "Откройте для себя подлинные туры по Эфиопии с Adventure in Abyssinie. Опытные гиды, индивидуальные маршруты от впадины Данакиль до Лалибэлы.",
+      "Авторские туры по Эфиопии с опытными гидами. Данакиль, Лалибэла, долина Омо и Симиен. Малые группы и индивидуальные маршруты.",
     ogSiteName: "Adventure in Abyssinie",
   },
 };
@@ -210,35 +252,9 @@ export default async function RootLayout({
         notoSerif.variable,
         manrope.variable
       )}>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "TravelAgency",
-              name: "Adventure in Abyssinie",
-              description:
-                "Specialists in curated, authentic journeys across the Ethiopian highlands. From the Danakil to the Omo Valley.",
-              url: BASE_URL,
-              telephone: "+251911603027",
-              email: "hello@aventure-abyssinie.com",
-              image: `${BASE_URL}/og-image.jpg`,
-              address: {
-                "@type": "PostalAddress",
-                addressCountry: "ET",
-              },
-              sameAs: [
-                "https://wa.me/251911603027",
-              ],
-              priceRange: "$$",
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: "4.8",
-                reviewCount: "12",
-                bestRating: "5",
-              },
-            }),
-          }}
+        <JsonLd
+          id="site-jsonld"
+          schema={[buildTravelAgencySchema(), buildWebSiteSchema()]}
         />
         <ThemeProvider 
           attribute="class" 

@@ -43,7 +43,7 @@ export default function HeroSearch({ trips }: { trips: Trip[] }) {
   const handleSelect = (trip: Trip) => {
     setQuery(trip.title);
     setShowSuggestions(false);
-    router.push(`/groups/${trip.slug}`);
+    router.push(`/itineraries/${trip.slug}`);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -51,7 +51,7 @@ export default function HeroSearch({ trips }: { trips: Trip[] }) {
     if (suggestions.length > 0) {
       handleSelect(suggestions[0]);
     } else if (query.trim()) {
-      router.push(`/groups?search=${encodeURIComponent(query)}`);
+      router.push(`/itineraries?search=${encodeURIComponent(query)}`);
     }
   };
 
@@ -116,7 +116,7 @@ export default function HeroSearch({ trips }: { trips: Trip[] }) {
           </div>
           <div className="bg-primary/5 p-3 border-t border-outline/10 dark:border-white/5">
             <button 
-              onClick={() => router.push(`/groups?search=${encodeURIComponent(query)}`)}
+              onClick={() => router.push(`/itineraries?search=${encodeURIComponent(query)}`)}
               className="text-primary font-label text-[10px] uppercase tracking-[0.2em] hover:underline"
             >
               {t("see_all_results", lang)} &quot;{query}&quot;

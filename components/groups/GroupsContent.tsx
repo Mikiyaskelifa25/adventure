@@ -116,7 +116,7 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
             filteredTrips.map((trip) => (
               <AnimateOnScroll key={trip.id} animation="fade-up">
                 <Link
-                  href={`/groups/${trip.slug}`}
+                  href={`/itineraries/${trip.slug}`}
                   className="bg-surface/50 dark:bg-white/5 rounded-2xl overflow-hidden border border-outline/50 dark:border-white/10 flex flex-col md:flex-row group hover:bg-surface dark:hover:bg-white/[0.08] hover:border-primary/60 dark:hover:border-primary/20 shadow-glass hover:shadow-premium transition-all duration-500 cursor-pointer block"
                 >
                   {trip.images.length > 0 && (
@@ -240,7 +240,7 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
                   </div>
                 ))}
               </div>
-              <Link href="/groups" className="mt-8 text-primary font-label text-xs uppercase tracking-widest flex items-center gap-2 group">
+              <Link href="/itineraries" className="mt-8 text-primary font-label text-xs uppercase tracking-widest flex items-center gap-2 group">
                 {t("view_all_collections", lang)}
                 <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </Link>

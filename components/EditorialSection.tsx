@@ -15,7 +15,7 @@ export default function EditorialSection({ trips }: { trips: Trip[] }) {
     title: getTripTitle(tour, lang),
     imageUrl: tour.heroImage,
     imageAlt: tour.description,
-    href: `/groups/${tour.slug}`,
+    href: `/itineraries/${tour.slug}`,
     elevated: index % 2 !== 0,
   }));
 

@@ -24,6 +24,7 @@ export default function HeroSection({ trips }: { trips: Trip[] }) {
           className="w-full h-full object-cover"
           fill
           priority
+          quality={60}
           src="/back.webp"
           sizes="100vw"
         />
