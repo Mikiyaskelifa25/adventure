@@ -9,6 +9,7 @@ import { Geist, Noto_Serif, Manrope } from "next/font/google";
 import { cn } from "@/lib/utils";
 import JsonLd from "@/components/JsonLd";
 import { buildTravelAgencySchema, buildWebSiteSchema } from "@/lib/jsonld";
+import Script from "next/script";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -235,15 +236,10 @@ export default async function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              var l=document.createElement('link');
-              l.rel='stylesheet';
-              l.href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
-              document.head.appendChild(l);
-            `,
-          }}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+          crossOrigin="anonymous"
         />
       </head>
       <body className={cn(
@@ -252,6 +248,18 @@ export default async function RootLayout({
         notoSerif.variable,
         manrope.variable
       )}>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-NVVNBK1VWR"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-NVVNBK1VWR');
+          `}
+        </Script>
         <JsonLd
           id="site-jsonld"
           schema={[buildTravelAgencySchema(), buildWebSiteSchema()]}

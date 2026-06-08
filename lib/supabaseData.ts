@@ -2,34 +2,45 @@ import { supabase } from "./supabase";
 import { Trip, TripDay } from "./tripsData";
 import type { Language } from "./i18n/translations";
 
+interface SupabaseItineraryDay {
+  day_number: number;
+  title: string;
+  fr_title?: string;
+  ru_title?: string;
+  activities: {
+    place: string;
+    latitude: number;
+    longitude: number;
+    description: string;
+    fr_description?: string;
+    ru_description?: string;
+  }[];
+}
+
 interface SupabaseTour {
   id: string;
   title: string;
   title_fr?: string;
+  title_ru?: string;
   category: string;
   duration: string;
   hero_image: string;
   banner_image: string;
   created_at: string;
   images: string[];
-  itinerary: {
-    day_number: number;
-    title: string;
-    activities: {
-      place: string;
-      latitude: number;
-      longitude: number;
-      description: string;
-    }[];
-  }[];
+  itinerary: SupabaseItineraryDay[];
+  itinerary_fr?: SupabaseItineraryDay[];
+  itinerary_ru?: SupabaseItineraryDay[];
   highlights?: string[];
   tips?: string[];
   group_size: number | null;
   difficulty: string | null;
   description?: string;
   description_fr?: string;
+  description_ru?: string;
   region?: string;
   region_fr?: string;
+  region_ru?: string;
   display_order: number;
   type: string | null;
 }
@@ -54,17 +65,52 @@ function slugify(text: string) {
     .replace(/--+/g, "-");
 }
 
+function enrichItineraryWithLang(
+  base: TripDay[],
+  langData: SupabaseItineraryDay[] | undefined,
+  lang: "fr" | "ru"
+): TripDay[] {
+  if (!langData) return base;
+  const titleKey = lang === "fr" ? "fr_title" : "ru_title";
+  const descKey = lang === "fr" ? "fr_description" : "ru_description";
+  const nameKey = lang === "fr" ? "fr_name" : "ru_name";
+  const actDescKey = lang === "fr" ? "fr_description" : "ru_description";
+
+  return base.map((day) => {
+    const langDay = langData.find((d) => d.day_number === day.day);
+    if (!langDay) return day;
+    return {
+      ...day,
+      [titleKey]: langDay.title,
+      [descKey]: langDay.activities?.map((a) => a.description).join(", ") || day.description,
+      activities: day.activities?.map((act, i) => {
+        const langAct = langDay.activities?.[i];
+        return {
+          ...act,
+          [nameKey]: langAct?.description || act.name,
+          [actDescKey]: langAct?.description || act.description || act.name,
+        };
+      }),
+    };
+  });
+}
+
 function mapTour(tour: SupabaseTour, index: number): Trip {
   const slug = slugify(tour.title || tour.itinerary?.[0]?.title || "ethiopia-tour");
 
-  const itinerary: TripDay[] = (tour.itinerary || []).map((day) => {
+  let itinerary: TripDay[] = (tour.itinerary || []).map((day) => {
     const lastActivity = day.activities?.[day.activities.length - 1];
     return {
       day: day.day_number,
       title: day.title,
+      fr_title: day.fr_title,
+      ru_title: day.ru_title,
       description: day.activities?.map((a) => a.description).join(", ") || "",
       activities: day.activities?.map((a) => ({
         name: a.description,
+        description: a.description,
+        fr_description: a.fr_description,
+        ru_description: a.ru_description,
         place: a.place,
         longitude: a.longitude,
         latitude: a.latitude,
@@ -75,11 +121,15 @@ function mapTour(tour: SupabaseTour, index: number): Trip {
     };
   });
 
+  itinerary = enrichItineraryWithLang(itinerary, tour.itinerary_fr, "fr");
+  itinerary = enrichItineraryWithLang(itinerary, tour.itinerary_ru, "ru");
+
   return {
     id: index + 1,
     slug,
     title: tour.title || itinerary[0]?.title || "Ethiopia Tour",
     title_fr: tour.title_fr,
+    title_ru: tour.title_ru,
     duration: tour.duration,
     daysCount: itinerary.length,
     price: "€2,450",
@@ -93,6 +143,7 @@ function mapTour(tour: SupabaseTour, index: number): Trip {
     bannerImageUrl: tour.banner_image || tour.hero_image || "",
     description: tour.description || itinerary[0]?.description || "Explore the wonders of Ethiopia.",
     description_fr: tour.description_fr,
+    description_ru: tour.description_ru,
     longDescription:
       itinerary.map((d) => d.description).join(" ") ||
       "This journey offers a deep dive into the unique landscapes and cultures of Ethiopia.",
@@ -114,7 +165,8 @@ function mapTour(tour: SupabaseTour, index: number): Trip {
       "Tipping (optional)",
     ],
     region: tour.region || "Ethiopia",
-    region_fr: (tour as any).region_fr,
+    region_fr: tour.region_fr,
+    region_ru: tour.region_ru,
     isNew: index === 0,
     category: mapCategory(tour.category),
     type: tour.type,
@@ -124,7 +176,7 @@ function mapTour(tour: SupabaseTour, index: number): Trip {
 
 export async function getToursFromSupabase(isLightweight = false): Promise<Trip[]> {
   const query = isLightweight 
-    ? "id, title, title_fr, category, duration, hero_image, banner_image, region, display_order, type, description, description_fr"
+    ? "id, title, title_fr, title_ru, category, duration, hero_image, banner_image, region, display_order, type, description, description_fr, description_ru"
     : "*";
 
   const { data, error } = await supabase

@@ -237,7 +237,7 @@ export function buildReviewListSchema(reviews: ReviewItem[]): JsonLdObject {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "@id": `${BASE_URL}/testimonials#reviews`,
+    "@id": `${BASE_URL}/testimonials`,
     name: "Customer Reviews – Adventure in Abyssinie",
     url: `${BASE_URL}/testimonials`,
     numberOfItems: reviews.length,

@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { Trip, getTripTitle, getTripDescription, getTripRegion } from "@/lib/tripsData";
+import { useState, useEffect } from "react";
+import { Trip, TripDay, getTripTitle, getTripDescription, getTripRegion, getDayTitle, getDayDescription, getActivityName, getActivityDescription } from "@/lib/tripsData";
 import { useLanguage } from "@/lib/i18n/context";
 import { t, type Language } from "@/lib/i18n/translations";
+import { supabase } from "@/lib/supabase";
 import AnimateOnScroll from "../AnimateOnScroll";
 import TourMap from "./TourMap";
 
@@ -20,20 +21,23 @@ const experienceIcons = [
 
 function getActivityIcon(name: string, lang: Language) {
   const lower = name.toLowerCase();
-  if (lower.includes("morning") || lower.includes("sunrise") || lower.includes("dawn")) {
+  const isMorning = /morning|sunrise|dawn|matin|aube|утро/i.test(lower);
+  const isAfternoon = /afternoon|noon|lunch|après-midi|midi|déjeuner|день|обед/i.test(lower);
+  const isEvening = /evening|night|sunset|dinner|trek to volcano|camp|soir|nuit|crépuscule|dîner|вечер|ночь/i.test(lower);
+  if (isMorning) {
     return { icon: "light_mode", color: "text-primary", label: t("morning", lang) };
   }
-  if (lower.includes("afternoon") || lower.includes("noon") || lower.includes("lunch")) {
+  if (isAfternoon) {
     return { icon: "wb_sunny", color: "text-primary", label: t("afternoon", lang) };
   }
-  if (lower.includes("evening") || lower.includes("night") || lower.includes("sunset") || lower.includes("dinner") || lower.includes("trek to volcano") || lower.includes("camp")) {
+  if (isEvening) {
     return { icon: "dark_mode", color: "text-primary", label: t("evening", lang) };
   }
   return { icon: "location_on", color: "text-primary/60", label: t("activities", lang) };
 }
 
 function cleanActivityName(name: string) {
-  return name.replace(/^(morning|afternoon|evening|night|sunrise|sunset):\s*/i, "");
+  return name.replace(/^(morning|afternoon|evening|night|sunrise|sunset|matin|après-midi|soir|nuit|утро|день|вечер|ночь)\s*:\s*/i, "");
 }
 
 const journeyFacts = [
@@ -58,19 +62,86 @@ export default function TripDetailContent({
   relatedImages?: string[]
 }) {
   const { lang } = useLanguage();
+  const [localTrip, setLocalTrip] = useState(trip);
   const [activeDay, setActiveDay] = useState(1);
   const [expandedDay, setExpandedDay] = useState<number | null>(1);
   const [activeImage, setActiveImage] = useState(0);
   const [showLightbox, setShowLightbox] = useState(false);
 
+  useEffect(() => {
+    if (lang === "en" || !trip.title) {
+      setLocalTrip(trip);
+      return;
+    }
+
+    const langCol = lang === "fr" ? "itinerary_fr" : "itinerary_ru";
+
+    supabase
+      .from("tours")
+      .select(`title_${lang}, description_${lang}, region_${lang}, ${langCol}`)
+      .eq("title", trip.title)
+      .single()
+      .then(({ data, error }) => {
+        if (error || !data) return;
+
+        setLocalTrip(prev => {
+          const raw = data as Record<string, any>;
+          const updated: Trip = { ...prev };
+
+          if (raw[`title_${lang}`]) {
+            if (lang === "fr") updated.title_fr = raw.title_fr;
+            else updated.title_ru = raw.title_ru;
+          }
+          if (raw[`description_${lang}`]) {
+            if (lang === "fr") updated.description_fr = raw.description_fr;
+            else updated.description_ru = raw.description_ru;
+          }
+          if (raw[`region_${lang}`]) {
+            if (lang === "fr") updated.region_fr = raw.region_fr;
+            else updated.region_ru = raw.region_ru;
+          }
+
+          const langItinerary = raw[langCol] as any[] | undefined;
+          if (langItinerary && langItinerary.length > 0) {
+            const nameKey = lang === "fr" ? "fr_name" : "ru_name";
+            const actDescKey = lang === "fr" ? "fr_description" : "ru_description";
+            const dayTitleKey = lang === "fr" ? "fr_title" : "ru_title";
+            const dayDescKey = lang === "fr" ? "fr_description" : "ru_description";
+
+            updated.itinerary = prev.itinerary.map(day => {
+              const langDay = langItinerary.find((d: any) => d.day_number === day.day);
+              if (!langDay) return day;
+              return {
+                ...day,
+                [dayTitleKey]: langDay.title,
+                [dayDescKey]: langDay.activities?.map((a: any) => a.description).join(", ") || day.description,
+                activities: day.activities?.map((act, i) => {
+                  const langAct = langDay.activities?.[i];
+                  return {
+                    ...act,
+                    [nameKey]: langAct?.description || act.name,
+                    [actDescKey]: langAct?.description || act.description || act.name,
+                  };
+                }),
+              };
+            });
+          }
+
+          return updated;
+        });
+      });
+  }, [lang, trip.title]);
+
+  const dt = localTrip;
+
   return (
     <>
       {/* ─── Hero ─── */}
-      {(trip.bannerImageUrl || trip.heroImage) && (
+      {(dt.bannerImageUrl || dt.heroImage) && (
         <section className="relative h-[45vh] md:h-[55vh] min-h-[280px] w-full overflow-hidden">
           <Image
-            src={trip.bannerImageUrl || trip.heroImage}
-            alt={getTripTitle(trip, lang)}
+            src={dt.bannerImageUrl || dt.heroImage}
+            alt={getTripTitle(dt, lang)}
             fill
             priority
             sizes="100vw"
@@ -92,18 +163,18 @@ export default function TripDetailContent({
               <div className="relative z-10">
                 <div className="flex flex-wrap items-center gap-3 mb-5">
                   <span className="bg-primary/20 text-primary font-label text-xs uppercase tracking-widest px-3 py-1 rounded-full">
-                    {getTripRegion(trip, lang)}
+                    {getTripRegion(dt, lang)}
                   </span>
                   <span className="text-on-surface-variant/60 text-xs">•</span>
-                  <span className="text-on-surface-variant font-label text-xs uppercase tracking-widest">{trip.duration}</span>
+                  <span className="text-on-surface font-label text-xs uppercase tracking-widest">{dt.duration}</span>
                   <span className="text-on-surface-variant/60 text-xs">•</span>
-                  <span className="text-on-surface-variant font-label text-xs uppercase tracking-widest">{trip.groupSize} {t("group_size", lang).toLowerCase()}</span>
+                  <span className="text-on-surface-variant font-label text-xs uppercase tracking-widest">{dt.groupSize} {t("group_size", lang).toLowerCase()}</span>
                   <span className="text-on-surface-variant/60 text-xs">•</span>
-                  <span className="text-on-surface-variant font-label text-xs uppercase tracking-widest">{trip.difficulty}</span>
+                  <span className="text-on-surface-variant font-label text-xs uppercase tracking-widest">{dt.difficulty}</span>
                 </div>
 
                 <h1 className="font-headline text-3xl md:text-4xl xl:text-5xl text-on-surface leading-tight mb-6 max-w-3xl drop-shadow-sm">
-                  {getTripTitle(trip, lang)}
+                  {getTripTitle(dt, lang)}
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-6">
@@ -111,14 +182,14 @@ export default function TripDetailContent({
                     {[...Array(5)].map((_, i) => (
                       <span
                         key={i}
-                        className={`material-symbols-outlined text-sm ${i < Math.floor(trip.rating) ? "text-primary" : "text-outline"}`}
+                        className={`material-symbols-outlined text-sm ${i < Math.floor(dt.rating) ? "text-primary" : "text-outline"}`}
                         style={{ fontVariationSettings: "'FILL' 1" }}
                       >
                         star
                       </span>
                     ))}
-                    <span className="text-on-surface font-bold text-sm ml-1">{trip.rating}</span>
-                    <span className="text-on-surface-variant text-sm">({trip.reviews} {t("reviews", lang)})</span>
+                    <span className="text-on-surface font-bold text-sm ml-1">{dt.rating}</span>
+                    <span className="text-on-surface-variant text-sm">({dt.reviews} {t("reviews", lang)})</span>
                   </div>
 
                 </div>
@@ -132,15 +203,15 @@ export default function TripDetailContent({
                     className="col-span-3 row-span-2 relative overflow-hidden cursor-pointer group"
                   >
                     <Image
-                      src={trip.images[activeImage]}
-                      alt={getTripTitle(trip, lang)}
+                      src={dt.images[activeImage]}
+                      alt={getTripTitle(dt, lang)}
                       fill
                       sizes="(max-width: 1024px) 75vw, 50vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-700"
                       
                     />
                   </div>
-                  {trip.images.slice(0, 2).map((img, i) => (
+                  {dt.images.slice(0, 2).map((img, i) => (
                     <div
                       key={i}
                       onClick={() => { setActiveImage(i); setShowLightbox(true); }}
@@ -168,17 +239,17 @@ export default function TripDetailContent({
               <AnimateOnScroll animation="fade-up">
                 <div>
                   <h2 className="font-headline text-2xl text-on-surface mb-5 border-b border-primary/20 pb-4">{t("about_this_trip", lang)}</h2>
-                  <p className="text-on-surface-variant font-body text-base leading-loose">{getTripDescription(trip, lang)}</p>
+                  <p className="text-on-surface-variant font-body text-base leading-loose">{getTripDescription(dt, lang)}</p>
                 </div>
               </AnimateOnScroll>
 
               {/* Highlights */}
-              {trip.highlights?.length ? (
+              {dt.highlights?.length ? (
                 <AnimateOnScroll animation="fade-up">
                   <div>
                     <h2 className="font-headline text-2xl text-on-surface mb-6 border-b border-primary/20 pb-4">{t("trip_highlights", lang)}</h2>
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {trip.highlights.map((hl, i) => {
+                      {dt.highlights.map((hl, i) => {
                         const isUnesco = hl.toLowerCase().includes("unesco");
                         return (
                           <li key={i} className="flex items-start gap-3">
@@ -206,9 +277,9 @@ export default function TripDetailContent({
                     <div className="absolute left-[22px] top-0 bottom-0 w-px bg-gradient-to-b from-primary/60 via-primary/20 to-transparent" />
 
                     <div className="space-y-6">
-                      {trip.itinerary.map((day, index) => {
+                      {dt.itinerary.map((day, index) => {
                         const isOpen = expandedDay === day.day;
-                        const isLast = index === trip.itinerary.length - 1;
+                        const isLast = index === dt.itinerary.length - 1;
                         return (
                           <div key={day.day} className="relative w-full clear-both pl-14 isolate">
                             {/* Day circle */}
@@ -245,7 +316,7 @@ export default function TripDetailContent({
                                     {t("day", lang)} {day.day}
                                   </p>
                                   <p className="font-headline text-on-surface text-base leading-snug truncate">
-                                    {day.title}
+                                    {getDayTitle(day, lang)}
                                   </p>
                                 </div>
                                 <div className="flex items-center gap-3 shrink-0">
@@ -293,7 +364,7 @@ export default function TripDetailContent({
                                                   )}
                                                 </div>
                                                 <p className="text-on-surface text-base leading-relaxed font-semibold">
-                                                  {cleanActivityName(activity.name)}
+                                                  {cleanActivityName(getActivityDescription(activity, lang))}
                                                 </p>
                                               </div>
                                             </div>
@@ -303,7 +374,7 @@ export default function TripDetailContent({
                                     </div>
                                   ) : (
                                     <p className="text-on-surface-variant text-sm leading-relaxed mt-4 mb-5">
-                                      {day.description}
+                                      {getDayDescription(day, lang)}
                                     </p>
                                   )}
                                   <div className="flex flex-wrap gap-3">
@@ -335,16 +406,16 @@ export default function TripDetailContent({
                   <h2 className="font-headline text-2xl text-on-surface mb-8 border-b border-primary/20 pb-4">
                     {t("interactive_journey_map", lang)}
                   </h2>
-                  <TourMap trip={trip} />
+                  <TourMap trip={dt} />
                 </div>
               </AnimateOnScroll>
 
-              {trip.tips && trip.tips.length > 0 && (
+              {dt.tips && dt.tips.length > 0 && (
               <AnimateOnScroll animation="fade-up">
                 <div>
                   <h2 className="font-headline text-2xl text-on-surface mb-6 border-b border-primary/20 pb-4">{t("travel_tips", lang)}</h2>
                   <ul className="space-y-3">
-                    {trip.tips.map((tip, i) => (
+                    {dt.tips.map((tip, i) => (
                       <li key={i} className="flex items-start gap-3">
                         <span className="material-symbols-outlined text-primary text-lg mt-0.5 shrink-0">lightbulb</span>
                         <span className="text-on-surface-variant text-sm leading-relaxed">{tip}</span>
@@ -361,7 +432,7 @@ export default function TripDetailContent({
                   <div>
                     <h3 className="font-headline text-xl text-on-surface mb-5 border-b border-primary/20 pb-3">{t("whats_included", lang)}</h3>
                     <ul className="space-y-3">
-                      {trip.included.map((item) => (
+                      {dt.included.map((item) => (
                         <li key={item} className="flex items-start gap-3">
                           <span className="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-lg shrink-0">check</span>
                           <span className="text-on-surface-variant text-sm">{item}</span>
@@ -372,7 +443,7 @@ export default function TripDetailContent({
                   <div>
                     <h3 className="font-headline text-xl text-on-surface mb-5 border-b border-outline/30 pb-3">{t("not_included", lang)}</h3>
                     <ul className="space-y-3">
-                      {trip.notIncluded.map((item) => (
+                      {dt.notIncluded.map((item) => (
                         <li key={item} className="flex items-start gap-3">
                           <span className="material-symbols-outlined text-red-600/70 dark:text-red-400/70 text-lg shrink-0">close</span>
                           <span className="text-on-surface-variant text-sm">{item}</span>
@@ -413,13 +484,13 @@ export default function TripDetailContent({
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex gap-1">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className={`material-symbols-outlined text-sm ${i < Math.floor(trip.rating) ? "text-primary" : "text-black/10 dark:text-white/10"}`} style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                      <span key={i} className={`material-symbols-outlined text-sm ${i < Math.floor(dt.rating) ? "text-primary" : "text-black/10 dark:text-white/10"}`} style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                     ))}
-                    <span className="text-on-surface font-bold text-sm ml-1">{trip.rating}</span>
+                    <span className="text-on-surface font-bold text-sm ml-1">{dt.rating}</span>
                   </div>
                   <div className="flex flex-wrap gap-3 text-xs text-on-surface-variant">
-                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-primary text-sm">calendar_month</span>{trip.duration}</span>
-                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-primary text-sm">group</span>{trip.groupSize}</span>
+                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-primary text-sm">calendar_month</span>{dt.duration}</span>
+                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-primary text-sm">group</span>{dt.groupSize}</span>
                   </div>
                 </div>
               </div>
@@ -435,15 +506,15 @@ export default function TripDetailContent({
                       {[...Array(5)].map((_, i) => (
                         <span
                           key={i}
-                          className={`material-symbols-outlined text-sm ${i < Math.floor(trip.rating) ? "text-primary" : "text-outline"}`}
+                          className={`material-symbols-outlined text-sm ${i < Math.floor(dt.rating) ? "text-primary" : "text-outline"}`}
                           style={{ fontVariationSettings: "'FILL' 1" }}
                         >
                           star
                         </span>
                       ))}
                     </div>
-                    <span className="text-on-surface font-bold text-sm">{trip.rating}</span>
-                    <span className="text-on-surface-variant text-xs">({trip.reviews})</span>
+                    <span className="text-on-surface font-bold text-sm">{dt.rating}</span>
+                    <span className="text-on-surface-variant text-xs">({dt.reviews})</span>
                   </div>
 
                   <div className="space-y-3 mb-7 text-sm">
@@ -454,10 +525,10 @@ export default function TripDetailContent({
                           {t(row.key, lang)}
                         </div>
                         <span className="text-on-surface font-medium text-right max-w-[55%] text-sm">
-                          {row.key === "duration" ? trip.duration :
-                           row.key === "group_size" ? `${trip.groupSize} ${t("group_size", lang).toLowerCase()}` :
-                           row.key === "difficulty" ? trip.difficulty :
-                           row.key === "region" ? getTripRegion(trip, lang) :
+                          {row.key === "duration" ? dt.duration :
+                           row.key === "group_size" ? `${dt.groupSize} ${t("group_size", lang).toLowerCase()}` :
+                           row.key === "difficulty" ? dt.difficulty :
+                           row.key === "region" ? getTripRegion(dt, lang) :
                            ""}
                         </span>
                       </div>
@@ -545,7 +616,7 @@ export default function TripDetailContent({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setActiveImage((prev) => (prev === 0 ? trip.images.length - 1 : prev - 1));
+              setActiveImage((prev) => (prev === 0 ? dt.images.length - 1 : prev - 1));
             }}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white z-10 p-2"
           >
@@ -557,8 +628,8 @@ export default function TripDetailContent({
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src={trip.images[activeImage]}
-              alt={getTripTitle(trip, lang)}
+              src={dt.images[activeImage]}
+              alt={getTripTitle(dt, lang)}
               fill
               className="object-contain"
               
@@ -569,7 +640,7 @@ export default function TripDetailContent({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setActiveImage((prev) => (prev === trip.images.length - 1 ? 0 : prev + 1));
+              setActiveImage((prev) => (prev === dt.images.length - 1 ? 0 : prev + 1));
             }}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white z-10 p-2"
           >
@@ -577,7 +648,7 @@ export default function TripDetailContent({
           </button>
 
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
-            {trip.images.map((_, i) => (
+            {dt.images.map((_, i) => (
               <button
                 key={i}
                 onClick={(e) => { e.stopPropagation(); setActiveImage(i); }}

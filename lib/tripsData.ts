@@ -3,10 +3,21 @@ import type { Language } from "./i18n/translations";
 export type TripDay = {
   day: number;
   title: string;
+  fr_title?: string;
+  ru_title?: string;
   description: string;
+  fr_description?: string;
+  ru_description?: string;
   activities?: {
     name: string;
+    fr_name?: string;
+    ru_name?: string;
+    description?: string;
+    fr_description?: string;
+    ru_description?: string;
     place: string;
+    fr_place?: string;
+    ru_place?: string;
     longitude: number;
     latitude: number;
   }[];
@@ -20,6 +31,7 @@ export type Trip = {
   slug: string;
   title: string;
   title_fr?: string;
+  title_ru?: string;
   duration: string;
   daysCount: number;
   price: string;
@@ -33,6 +45,7 @@ export type Trip = {
   bannerImageUrl?: string;
   description: string;
   description_fr?: string;
+  description_ru?: string;
   longDescription: string;
   highlights: string[];
   itinerary: TripDay[];
@@ -41,6 +54,7 @@ export type Trip = {
   notIncluded: string[];
   region: string;
   region_fr?: string;
+  region_ru?: string;
   isNew: boolean;
   category: "Group Trip" | "Daily" | "Private Trip" | "Tailor-made";
   type: string | null;
@@ -48,15 +62,51 @@ export type Trip = {
 };
 
 export function getTripTitle(trip: Trip, lang: Language): string {
-  return lang === "fr" && trip.title_fr ? trip.title_fr : trip.title;
+  if (lang === "fr" && trip.title_fr) return trip.title_fr;
+  if (lang === "ru" && trip.title_ru) return trip.title_ru;
+  return trip.title;
 }
 
 export function getTripDescription(trip: Trip, lang: Language): string {
-  return lang === "fr" && trip.description_fr ? trip.description_fr : trip.description;
+  if (lang === "fr" && trip.description_fr) return trip.description_fr;
+  if (lang === "ru" && trip.description_ru) return trip.description_ru;
+  return trip.description;
 }
 
 export function getTripRegion(trip: Trip, lang: Language): string {
-  return lang === "fr" && trip.region_fr ? trip.region_fr : trip.region;
+  if (lang === "fr" && trip.region_fr) return trip.region_fr;
+  if (lang === "ru" && trip.region_ru) return trip.region_ru;
+  return trip.region;
+}
+
+export function getDayTitle(day: TripDay, lang: Language): string {
+  if (lang === "fr" && day.fr_title) return day.fr_title;
+  if (lang === "ru" && day.ru_title) return day.ru_title;
+  return day.title;
+}
+
+export function getDayDescription(day: TripDay, lang: Language): string {
+  if (lang === "fr" && day.fr_description) return day.fr_description;
+  if (lang === "ru" && day.ru_description) return day.ru_description;
+  return day.description;
+}
+
+export function getActivityName(
+  activity: NonNullable<TripDay["activities"]>[number],
+  lang: Language
+): string {
+  if (lang === "fr" && activity.fr_name) return activity.fr_name;
+  if (lang === "ru" && activity.ru_name) return activity.ru_name;
+  return activity.name;
+}
+
+export function getActivityDescription(
+  activity: NonNullable<TripDay["activities"]>[number],
+  lang: Language
+): string {
+  if (lang === "fr" && activity.fr_description) return activity.fr_description;
+  if (lang === "ru" && activity.ru_description) return activity.ru_description;
+  return activity.description || activity.name;
 }
 
 export const trips: Trip[] = [
