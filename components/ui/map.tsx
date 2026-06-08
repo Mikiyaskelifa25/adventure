@@ -17,6 +17,13 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
+import type {
+  FeatureCollection,
+  Feature,
+  LineString,
+  Point,
+  GeoJsonProperties,
+} from "geojson";
 
 import { cn } from "@/lib/utils";
 
@@ -1356,7 +1363,7 @@ function MapArc<T extends MapArcDatum = MapArcDatum>({
     return Math.max(base + ARC_HIT_PADDING, ARC_HIT_MIN_WIDTH);
   }, [paint]);
 
-  const geoJSON = useMemo<GeoJSON.FeatureCollection<GeoJSON.LineString>>(
+  const geoJSON = useMemo<FeatureCollection<LineString>>(
     () => ({
       type: "FeatureCollection",
       features: data.map((arc) => {
@@ -1536,10 +1543,10 @@ function MapArc<T extends MapArcDatum = MapArcDatum>({
 }
 
 type MapClusterLayerProps<
-  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
+  P extends GeoJsonProperties = GeoJsonProperties,
 > = {
   /** GeoJSON FeatureCollection data or URL to fetch GeoJSON from */
-  data: string | GeoJSON.FeatureCollection<GeoJSON.Point, P>;
+  data: string | FeatureCollection<Point, P>;
   /** Maximum zoom level to cluster points on (default: 14) */
   clusterMaxZoom?: number;
   /** Radius of each cluster when clustering points in pixels (default: 50) */
@@ -1552,7 +1559,7 @@ type MapClusterLayerProps<
   pointColor?: string;
   /** Callback when an unclustered point is clicked */
   onPointClick?: (
-    feature: GeoJSON.Feature<GeoJSON.Point, P>,
+    feature: Feature<Point, P>,
     coordinates: [number, number],
   ) => void;
   /** Callback when a cluster is clicked. If not provided, zooms into the cluster */
@@ -1564,7 +1571,7 @@ type MapClusterLayerProps<
 };
 
 function MapClusterLayer<
-  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
+  P extends GeoJsonProperties = GeoJsonProperties,
 >({
   data,
   clusterMaxZoom = 14,
@@ -1752,7 +1759,7 @@ function MapClusterLayer<
       const feature = features[0];
       const clusterId = feature.properties?.cluster_id as number;
       const pointCount = feature.properties?.point_count as number;
-      const coordinates = (feature.geometry as GeoJSON.Point).coordinates as [
+      const coordinates = (feature.geometry as Point).coordinates as [
         number,
         number,
       ];
@@ -1780,7 +1787,7 @@ function MapClusterLayer<
 
       const feature = e.features[0];
       const coordinates = (
-        feature.geometry as GeoJSON.Point
+        feature.geometry as Point
       ).coordinates.slice() as [number, number];
 
       // Handle world copies
@@ -1789,7 +1796,7 @@ function MapClusterLayer<
       }
 
       onPointClick(
-        feature as unknown as GeoJSON.Feature<GeoJSON.Point, P>,
+        feature as unknown as Feature<Point, P>,
         coordinates,
       );
     };
