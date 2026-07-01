@@ -27,15 +27,23 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const stored = localStorage.getItem("lang") as Language | null;
     if (stored === "en" || stored === "fr" || stored === "ru") {
       setLangState(stored);
+      setMounted(true);
+      return;
     }
+
+    // Read from cookie set by server (proxy detected subdomain)
+    const cookieLang = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("lang="))
+      ?.split("=")[1] as Language | undefined;
+
+    if (cookieLang === "fr" || cookieLang === "ru") {
+      setLangState(cookieLang);
+      localStorage.setItem("lang", cookieLang);
+    }
+
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (mounted) {
-      setCookie("lang", lang);
-    }
-  }, [lang, mounted]);
 
   const setLang = useCallback((newLang: Language) => {
     setLangState(newLang);
