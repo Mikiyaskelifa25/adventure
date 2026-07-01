@@ -5,7 +5,6 @@ const BASE_URL = "https://adventureinnethiopia.com"
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      // ── Main crawlers: full access except internal API routes ──────────────
       {
         userAgent: "*",
         allow: "/",
@@ -18,7 +17,6 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "Googlebot-Image",
-        // Allow image crawling for tour hero images → Google Image Search traffic
         allow: ["/", "/*.jpg$", "/*.JPG$", "/*.jpeg$", "/*.png$", "/*.webp$"],
         disallow: ["/api/"],
       },
@@ -27,7 +25,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: ["/api/"],
       },
-      // ── Block AI training scrapers ─────────────────────────────────────────
       {
         userAgent: "GPTBot",
         disallow: ["/"],
@@ -46,6 +43,5 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
-    host: BASE_URL,
   }
 }

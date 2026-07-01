@@ -106,9 +106,9 @@ export default function TopNavBar() {
             className={`w-10 h-10 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors ${isScrolled || menuOpen ? "text-on-surface" : "text-white/90"
               }`}
             onClick={() => setMenuOpen((v) => !v)}
-            aria-label="Toggle menu"
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
           >
-            <span className="material-symbols-outlined text-2xl">
+            <span className="material-symbols-outlined text-2xl" aria-hidden="true">
               {menuOpen ? "close" : "menu"}
             </span>
           </button>

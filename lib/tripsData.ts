@@ -123,8 +123,8 @@ export const trips: Trip[] = [
     reviews: 12,
     groupSize: "8–14",
     difficulty: "Moderate",
-    images: ["/pic1.jpg", "/pic2.JPG", "/pic3.JPG"],
-    heroImage: "/pic5.JPG",
+    images: ["/pic1.webp", "/pic2.webp", "/pic3.webp"],
+    heroImage: "/pic5.webp",
     description:
       "Discover the ancestral lands of the Amhara people, the lunar landscapes of Danakil and the spiritual depth of Lalibela.",
     description_fr:
@@ -191,8 +191,8 @@ export const trips: Trip[] = [
     reviews: 8,
     groupSize: "6–10",
     difficulty: "Easy / Moderate",
-    images: ["/pic4.jpg", "/pic5.JPG", "/pic6.jpg"],
-    heroImage: "/pic4.jpg",
+    images: ["/pic4.webp", "/pic5.webp", "/pic6.webp"],
+    heroImage: "/pic4.webp",
     description:
       "Immerse yourself in the unique cultures of the Omo Valley, where tradition meets ancient rituals in a breathtaking setting.",
     description_fr:
@@ -256,8 +256,8 @@ export const trips: Trip[] = [
     reviews: 15,
     groupSize: "6–12",
     difficulty: "Challenging",
-    images: ["/pic2.JPG", "/pic1.jpg", "/pic5.JPG"],
-    heroImage: "/pic2.JPG",
+    images: ["/pic2.webp", "/pic1.webp", "/pic5.webp"],
+    heroImage: "/pic2.webp",
     description:
       "A journey to the lowest point on Earth, witnessing the incredible salt caravans and the volcanic wonders of Erta Ale.",
     description_fr:

@@ -6,30 +6,29 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import { getToursFromSupabase } from "@/lib/supabaseData";
+import { getPageMeta, getLocaleFromCookies } from "@/lib/metadata";
+import JsonLd from "@/components/JsonLd";
+import { buildBreadcrumbSchema } from "@/lib/jsonld";
 
-export const metadata = {
-  title: "Adventure in Abyssinie | Expert Ethiopia Tours – Danakil, Lalibela & Omo Valley",
-  description:
-    "Ethiopia's premier small-group & tailor-made tour operator. Expert French & English-speaking guides. Danakil Depression, Lalibela UNESCO churches, Omo Valley tribal tours, Simien Mountains trekking & Gondar castles. Book direct from Addis Ababa.",
-  keywords: [
-    "Ethiopia tour operator",
-    "Adventure in Abyssinie",
-    "Danakil Depression tour 2025",
-    "Lalibela church tour",
-    "Omo Valley tribal experience",
-    "French-speaking guide Ethiopia",
-    "small group Ethiopia tour",
-    "Ethiopia private tour",
-    "Simien Mountains trek",
-    "Ethiopia tailor-made itinerary",
-  ],
-};
+export async function generateMetadata() {
+  const locale = await getLocaleFromCookies();
+  return getPageMeta("home", locale);
+}
 
 export default async function Home() {
+  const locale = await getLocaleFromCookies();
   const trips = await getToursFromSupabase(true);
 
   return (
     <>
+      <JsonLd
+        id="home-jsonld"
+        schema={[
+          buildBreadcrumbSchema([
+            { name: "Home", url: "/" },
+          ], locale),
+        ]}
+      />
       <TopNavBar />
       <main>
         <HeroSection trips={trips} />

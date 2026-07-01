@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Trip } from "@/lib/tripsData";
 import { useLanguage } from "@/lib/i18n/context";
 import { t } from "@/lib/i18n/translations";
@@ -92,14 +91,6 @@ export default function HeroSearch({ trips }: { trips: Trip[] }) {
                 onClick={() => handleSelect(trip)}
                 className="w-full flex items-center gap-4 p-3 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-xl transition-colors text-left group"
               >
-                <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0">
-                  <Image
-                    src={trip.images[0]}
-                    alt={trip.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-on-surface dark:text-white font-headline text-sm truncate group-hover:text-primary transition-colors">
                     {trip.title}

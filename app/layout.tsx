@@ -28,7 +28,15 @@ const manrope = Manrope({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-const BASE_URL = "https://adventureinnethiopia.com";
+const BASE_URL_EN = "https://adventureinnethiopia.com";
+const BASE_URL_FR = "https://fr.adventureinnethiopia.com";
+const BASE_URL_RU = "https://ru.adventureinnethiopia.com";
+
+function baseUrlForLocale(locale: string) {
+  if (locale === "fr") return BASE_URL_FR;
+  if (locale === "ru") return BASE_URL_RU;
+  return BASE_URL_EN;
+}
 
 const siteMeta = {
   en: {
@@ -150,9 +158,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const lang = cookieStore.get("lang")?.value;
   const locale: "en" | "fr" | "ru" = lang === "fr" || lang === "ru" ? lang : "en";
   const meta = siteMeta[locale];
+  const baseUrl = baseUrlForLocale(locale);
 
   return {
-    metadataBase: new URL(BASE_URL),
+    metadataBase: new URL(baseUrl),
     title: meta.title,
     description: meta.description,
     keywords: meta.keywords,
@@ -170,7 +179,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: meta.ogSiteName,
       title: meta.ogTitle,
       description: meta.ogDescription,
-      url: BASE_URL,
+      url: baseUrl,
       images: [
         {
           url: "/og-image.jpg",
@@ -202,12 +211,12 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     alternates: {
-      canonical: BASE_URL,
+      canonical: baseUrl,
       languages: {
-        en: BASE_URL,
-        fr: BASE_URL,
-        ru: BASE_URL,
-        "x-default": BASE_URL,
+        en: BASE_URL_EN,
+        fr: BASE_URL_FR,
+        ru: BASE_URL_RU,
+        "x-default": BASE_URL_EN,
       },
     },
     category: "travel",
@@ -220,6 +229,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const lang = await getServerLang();
+  const locale: "en" | "fr" | "ru" = lang === "fr" || lang === "ru" ? lang : "en";
 
   return (
     <html 
@@ -248,6 +258,12 @@ export default async function RootLayout({
         notoSerif.variable,
         manrope.variable
       )}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-3 focus:bg-primary focus:text-on-primary focus:rounded-xl focus:text-sm focus:font-bold focus:outline-none"
+        >
+          Skip to main content
+        </a>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-NVVNBK1VWR"
           strategy="afterInteractive"
@@ -262,7 +278,7 @@ export default async function RootLayout({
         </Script>
         <JsonLd
           id="site-jsonld"
-          schema={[buildTravelAgencySchema(), buildWebSiteSchema()]}
+          schema={[buildTravelAgencySchema(locale), buildWebSiteSchema(locale)]}
         />
         <ThemeProvider 
           attribute="class" 
@@ -272,7 +288,7 @@ export default async function RootLayout({
         >
           <LanguageProvider>
             <EthiopianPatternBg />
-            <div className="relative z-10">
+            <div id="main-content" className="relative z-10">
               {children}
             </div>
           </LanguageProvider>

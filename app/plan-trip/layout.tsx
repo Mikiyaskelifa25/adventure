@@ -1,29 +1,22 @@
-/**
- * Server layout for /plan-trip.
- * Injects SEO metadata and JSON-LD structured data.
- */
+import { cookies } from "next/headers";
 import JsonLd from "@/components/JsonLd";
 import { buildBreadcrumbSchema } from "@/lib/jsonld";
+import { getPageMeta, parseLocale } from "@/lib/metadata";
 
-export const metadata = {
-  title: "Plan Your Custom Ethiopia Trip | Tailor-Made Tours",
-  description:
-    "Design your perfect Ethiopia itinerary. Get a free custom quote for Danakil Depression, Lalibela, Omo Valley, and Simien Mountains tours from expert local guides.",
-  keywords: [
-    "custom Ethiopia tour",
-    "plan trip to Ethiopia",
-    "tailor-made Ethiopia itinerary",
-    "book Ethiopia travel",
-    "private Ethiopia guide",
-    "Ethiopia tour quote",
-  ],
-};
+export async function generateMetadata() {
+  const cookieStore = await cookies();
+  const locale = parseLocale(cookieStore.get("lang")?.value);
+  return getPageMeta("planTrip", locale);
+}
 
-export default function PlanTripLayout({
+export default async function PlanTripLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const locale = parseLocale(cookieStore.get("lang")?.value);
+
   return (
     <>
       <JsonLd
@@ -32,7 +25,7 @@ export default function PlanTripLayout({
           buildBreadcrumbSchema([
             { name: "Home", url: "/" },
             { name: "Plan Trip", url: "/plan-trip" },
-          ]),
+          ], locale),
         ]}
       />
       {children}

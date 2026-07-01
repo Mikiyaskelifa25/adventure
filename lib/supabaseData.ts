@@ -244,7 +244,7 @@ export async function getCollectionsFromSupabase(): Promise<
   return (data || []).map((c: unknown) => {
     const col = c as { image?: string; title?: string; tag?: string };
     return {
-      image: col.image || "/pic1.jpg",
+      image: col.image || "/pic1.webp",
       title: col.title || "Collection",
       tag: col.tag || "Explore",
     };

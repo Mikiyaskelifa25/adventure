@@ -206,7 +206,7 @@ export default function GroupsContent({ trips, collections }: { trips: Trip[], c
               <h4 className="font-headline text-xl md:text-2xl text-on-surface mb-6 font-bold border-b border-primary/20 pb-4">{t("experts_title", lang)}</h4>
               <div className="flex flex-col sm:flex-row items-start gap-5 bg-surface/50 dark:bg-white/5 p-6 rounded-2xl border border-outline/50 dark:border-white/10 shadow-glass">
                 <div className="relative w-20 h-20 rounded-full overflow-hidden shrink-0 border-4 border-surface dark:border-surface-container">
-                  <Image src="/aboutus.jpg" alt="Expert" fill sizes="80px" className="object-cover" />
+                  <Image src="/aboutus.webp" alt="Expert" fill sizes="80px" className="object-cover" />
                 </div>
                 <div>
                   <h5 className="font-headline text-lg text-on-surface mb-1">{t("expert_name", lang)}</h5>

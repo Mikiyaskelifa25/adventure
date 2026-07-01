@@ -16,7 +16,7 @@ export default function ItinerariesHero() {
           fill
           priority
           quality={60}
-          src="/pic3.JPG"
+          src="/pic3.webp"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-black/30"></div>

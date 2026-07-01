@@ -185,7 +185,7 @@ async function buildPDF(data: {
   
   // Logo
   try {
-    const logoPath = path.join(process.cwd(), "public", "logo.jpg");
+    const logoPath = path.join(process.cwd(), "public", "logo.webp");
     const logoBytes = fs.readFileSync(logoPath);
     const logoImage = await doc.embedJpg(logoBytes);
     const LOGO_W = 75;

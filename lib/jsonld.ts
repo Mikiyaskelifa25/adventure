@@ -1,31 +1,38 @@
 import type { Trip } from "./tripsData";
 
-const BASE_URL = "https://adventureinnethiopia.com";
+const BASE_URL_EN = "https://adventureinnethiopia.com";
+const BASE_URL_FR = "https://fr.adventureinnethiopia.com";
+const BASE_URL_RU = "https://ru.adventureinnethiopia.com";
 const BRAND_NAME = "Adventure in Abyssinie";
 
-// ─── Primitives ───────────────────────────────────────────────────────────────
+type Locale = "en" | "fr" | "ru";
+
+function getBaseUrl(locale?: Locale): string {
+  if (locale === "fr") return BASE_URL_FR;
+  if (locale === "ru") return BASE_URL_RU;
+  return BASE_URL_EN;
+}
 
 export type JsonLdObject = Record<string, unknown>;
 
-// ─── 1. TravelAgency (site-wide, used in root layout) ────────────────────────
-
-export function buildTravelAgencySchema(): JsonLdObject {
+export function buildTravelAgencySchema(locale?: Locale): JsonLdObject {
+  const url = getBaseUrl(locale);
   return {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
-    "@id": `${BASE_URL}/#organization`,
+    "@id": `${url}/#organization`,
     name: BRAND_NAME,
     alternateName: ["Adventure in Ethiopia", "Aventure en Abyssinie"],
     description:
       "Specialists in curated, authentic journeys across the Ethiopian highlands. From the Danakil Depression to the Omo Valley.",
-    url: BASE_URL,
+    url: url,
     logo: {
       "@type": "ImageObject",
-      url: `${BASE_URL}/logo.ico`,
+      url: `${url}/logo.ico`,
       width: "512",
       height: "512",
     },
-    image: `${BASE_URL}/og-image.jpg`,
+    image: `${url}/og-image.jpg`,
     telephone: "+251911603027",
     email: "tedbezmengistu@gmail.com",
     address: {
@@ -58,42 +65,40 @@ export function buildTravelAgencySchema(): JsonLdObject {
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Ethiopia Tour Packages",
-      url: `${BASE_URL}/itineraries`,
+      url: `${url}/itineraries`,
     },
   };
 }
 
-// ─── 2. WebSite (used in root layout for sitelinks search box) ───────────────
-
-export function buildWebSiteSchema(): JsonLdObject {
+export function buildWebSiteSchema(locale?: Locale): JsonLdObject {
+  const url = getBaseUrl(locale);
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "@id": `${BASE_URL}/#website`,
+    "@id": `${url}/#website`,
     name: BRAND_NAME,
-    url: BASE_URL,
+    url: url,
     publisher: {
-      "@id": `${BASE_URL}/#about-us`,
+      "@id": `${url}/#about-us`,
     },
     inLanguage: ["en", "fr", "ru"],
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${BASE_URL}/itineraries?q={search_term_string}`,
+        urlTemplate: `${url}/itineraries?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
   };
 }
 
-// ─── 3. TouristTrip / Product (used on individual tour detail pages) ──────────
-
-export function buildTourSchema(trip: Trip): JsonLdObject {
-  const tourUrl = `${BASE_URL}/itineraries/${trip.slug}`;
+export function buildTourSchema(trip: Trip, locale?: Locale): JsonLdObject {
+  const url = getBaseUrl(locale);
+  const tourUrl = `${url}/itineraries/${trip.slug}`;
   const imageUrl = trip.heroImage?.startsWith("http")
     ? trip.heroImage
-    : `${BASE_URL}${trip.heroImage || "/og-image.jpg"}`;
+    : `${url}${trip.heroImage || "/og-image.jpg"}`;
 
   return {
     "@context": "https://schema.org",
@@ -105,7 +110,7 @@ export function buildTourSchema(trip: Trip): JsonLdObject {
     image: [
       imageUrl,
       ...(trip.images || []).slice(0, 4).map((img) =>
-        img.startsWith("http") ? img : `${BASE_URL}${img}`
+        img.startsWith("http") ? img : `${url}${img}`
       ),
     ],
     touristType: [
@@ -139,7 +144,6 @@ export function buildTourSchema(trip: Trip): JsonLdObject {
       })),
     },
     duration: trip.duration,
-    // numberOfNights derived from daysCount
     offers: {
       "@type": "Offer",
       "@id": `${tourUrl}#offer`,
@@ -149,7 +153,7 @@ export function buildTourSchema(trip: Trip): JsonLdObject {
       availability: "https://schema.org/InStock",
       validFrom: new Date().toISOString().split("T")[0],
       seller: {
-        "@id": `${BASE_URL}/#organization`,
+        "@id": `${url}/#organization`,
       },
     },
     aggregateRating: {
@@ -160,37 +164,35 @@ export function buildTourSchema(trip: Trip): JsonLdObject {
       worstRating: "1",
     },
     provider: {
-      "@id": `${BASE_URL}/#organization`,
+      "@id": `${url}/#organization`,
     },
     inLanguage: "en",
     availableLanguage: ["English", "French", "Russian"],
   };
 }
 
-// ─── 4. ItemList (used on the /groups and /itineraries listing pages) ─────────
-
-export function buildTourListSchema(trips: Trip[], pageTitle: string, pageUrl: string): JsonLdObject {
+export function buildTourListSchema(trips: Trip[], pageTitle: string, pageUrl: string, locale?: Locale): JsonLdObject {
+  const url = getBaseUrl(locale);
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "@id": `${BASE_URL}${pageUrl}#list`,
+    "@id": `${url}${pageUrl}#list`,
     name: pageTitle,
-    url: `${BASE_URL}${pageUrl}`,
+    url: `${url}${pageUrl}`,
     numberOfItems: trips.length,
     itemListElement: trips.map((trip, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: `${BASE_URL}/itineraries/${trip.slug}`,
+      url: `${url}/itineraries/${trip.slug}`,
       name: trip.title,
     })),
   };
 }
 
-// ─── 5. BreadcrumbList ────────────────────────────────────────────────────────
-
 export type BreadcrumbItem = { name: string; url: string };
 
-export function buildBreadcrumbSchema(items: BreadcrumbItem[]): JsonLdObject {
+export function buildBreadcrumbSchema(items: BreadcrumbItem[], locale?: Locale): JsonLdObject {
+  const url = getBaseUrl(locale);
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -198,12 +200,10 @@ export function buildBreadcrumbSchema(items: BreadcrumbItem[]): JsonLdObject {
       "@type": "ListItem",
       position: i + 1,
       name: item.name,
-      item: item.url.startsWith("http") ? item.url : `${BASE_URL}${item.url}`,
+      item: item.url.startsWith("http") ? item.url : `${url}${item.url}`,
     })),
   };
 }
-
-// ─── 6. FAQPage ───────────────────────────────────────────────────────────────
 
 export type FaqItem = { question: string; answer: string };
 
@@ -222,8 +222,6 @@ export function buildFaqSchema(faqs: FaqItem[]): JsonLdObject {
   };
 }
 
-// ─── 7. Review / ItemList of Reviews (used on /testimonials) ─────────────────
-
 export type ReviewItem = {
   id: number;
   name: string;
@@ -233,20 +231,21 @@ export type ReviewItem = {
   image?: string;
 };
 
-export function buildReviewListSchema(reviews: ReviewItem[]): JsonLdObject {
+export function buildReviewListSchema(reviews: ReviewItem[], locale?: Locale): JsonLdObject {
+  const url = getBaseUrl(locale);
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "@id": `${BASE_URL}/testimonials`,
+    "@id": `${url}/testimonials`,
     name: "Customer Reviews – Adventure in Abyssinie",
-    url: `${BASE_URL}/testimonials`,
+    url: `${url}/testimonials`,
     numberOfItems: reviews.length,
     itemListElement: reviews.map((review, i) => ({
       "@type": "ListItem",
       position: i + 1,
       item: {
         "@type": "Review",
-        "@id": `${BASE_URL}/testimonials#review-${review.id}`,
+        "@id": `${url}/testimonials#review-${review.id}`,
         author: {
           "@type": "Person",
           name: review.name,
@@ -267,7 +266,7 @@ export function buildReviewListSchema(reviews: ReviewItem[]): JsonLdObject {
           }
         })(),
         itemReviewed: {
-          "@id": `${BASE_URL}/#organization`,
+          "@id": `${url}/#organization`,
         },
       },
     })),

@@ -56,7 +56,7 @@ const sidebarRows = [
 
 export default function TripDetailContent({ 
   trip,
-  relatedImages = ["/pic1.jpg", "/pic4.jpg", "/pic6.jpg"] 
+  relatedImages = ["/pic1.webp", "/pic4.webp", "/pic6.webp"] 
 }: { 
   trip: Trip,
   relatedImages?: string[]

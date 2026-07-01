@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   /* @ts-ignore */
   allowedDevOrigins: ["192.168.8.111"],
   images: {
+    qualities: [60, 75],
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
@@ -31,6 +32,16 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "qyqznotyitbylddsdclq.supabase.co",
         pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
+        hostname: "fr.adventureinnethiopia.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "ru.adventureinnethiopia.com",
+        pathname: "/**",
       },
     ],
   },

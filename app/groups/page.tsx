@@ -6,14 +6,15 @@ import { getToursFromSupabase, getCollectionsFromSupabase } from "@/lib/supabase
 import { Suspense } from "react";
 import JsonLd from "@/components/JsonLd";
 import { buildTourListSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
+import { getPageMeta, getLocaleFromCookies } from "@/lib/metadata";
 
-export const metadata = {
-  title: "Ethiopia Group Tours 2025 | Small Group & Private Packages",
-  description:
-    "Explore Ethiopia with expert-guided group tours. Danakil Depression, Lalibela churches, Omo Valley tribes & Simien Mountains trekking. Small groups of 6–14, French & English-speaking guides. Book from Addis Ababa.",
-};
+export async function generateMetadata() {
+  const locale = await getLocaleFromCookies();
+  return getPageMeta("groups", locale);
+}
 
 export default async function GroupsPage() {
+  const locale = await getLocaleFromCookies();
   const [trips, collections] = await Promise.all([
     getToursFromSupabase(),
     getCollectionsFromSupabase()
@@ -24,11 +25,11 @@ export default async function GroupsPage() {
       <JsonLd
         id="groups-jsonld"
         schema={[
-          buildTourListSchema(trips, "Ethiopia Group Tours", "/groups"),
+          buildTourListSchema(trips, "Ethiopia Group Tours", "/groups", locale),
           buildBreadcrumbSchema([
             { name: "Home", url: "/" },
             { name: "Group Tours", url: "/groups" },
-          ]),
+          ], locale),
         ]}
       />
       <TopNavBar />

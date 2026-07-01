@@ -1,31 +1,20 @@
-/**
- * Server layout for /testimonials.
- * Injects JSON-LD here because the page itself is a Client Component
- * and cannot import server-only schema builders directly.
- */
 import { testimonials } from "@/lib/testimonialsData";
 import JsonLd from "@/components/JsonLd";
 import { buildReviewListSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
+import { getPageMeta, getLocaleFromCookies } from "@/lib/metadata";
 
-export const metadata = {
-  title: "Traveller Reviews | Ethiopia Tours – Adventure in Abyssinie",
-  description:
-    "Read authentic 5-star reviews from travellers who explored Ethiopia with Adventure in Abyssinie. Real stories: Danakil Depression, Lalibela, Omo Valley, Simien Mountains. French-speaking guide Teddy rated 4.8/5.",
-  keywords: [
-    "Ethiopia tour reviews",
-    "Adventure in Abyssinie reviews",
-    "Ethiopia travel testimonials",
-    "Teddy guide Ethiopia",
-    "French-speaking Ethiopia guide reviews",
-    "TripAdvisor Ethiopia tour",
-  ],
-};
+export async function generateMetadata() {
+  const locale = await getLocaleFromCookies();
+  return getPageMeta("testimonials", locale);
+}
 
-export default function TestimonialsLayout({
+export default async function TestimonialsLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocaleFromCookies();
+
   return (
     <>
       <JsonLd
@@ -39,12 +28,13 @@ export default function TestimonialsLayout({
               rating: t.rating,
               date: t.date,
               image: t.image,
-            }))
+            })),
+            locale
           ),
           buildBreadcrumbSchema([
             { name: "Home", url: "/" },
             { name: "Testimonials", url: "/testimonials" },
-          ]),
+          ], locale),
         ]}
       />
       {children}

@@ -4,34 +4,9 @@ import { useState } from "react";
 import AnimateOnScroll from "./AnimateOnScroll";
 import { useLanguage } from "@/lib/i18n/context";
 import { t } from "@/lib/i18n/translations";
+import { getGeoInfo, type GeoInfo } from "@/lib/geo";
 
 type Status = "idle" | "loading" | "success" | "error";
-
-interface GeoInfo {
-  country: string;
-  address: string;
-}
-
-async function getGeoInfo(): Promise<GeoInfo> {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2500);
-
-    const res = await fetch("https://ipapi.co/json/", { signal: controller.signal });
-    clearTimeout(timeoutId);
-
-    if (!res.ok) throw new Error("geo lookup failed");
-    const data = await res.json();
-    
-    return {
-      country: data.country_name || "Unknown",
-      address: [data.city, data.region, data.country_name].filter(Boolean).join(", ") || "Unknown"
-    };
-  } catch (err) {
-    console.log("Geo lookup skipped or blocked.");
-    return { country: "Unknown", address: "Unknown" };
-  }
-}
 
 export default function ContactSection() {
   const { lang } = useLanguage();

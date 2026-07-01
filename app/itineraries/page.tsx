@@ -6,14 +6,15 @@ import { getToursFromSupabase } from "@/lib/supabaseData";
 import { Suspense } from "react";
 import JsonLd from "@/components/JsonLd";
 import { buildTourListSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
+import { getPageMeta, getLocaleFromCookies } from "@/lib/metadata";
 
-export const metadata = {
-  title: "Ethiopia Tour Itineraries 2025 | Danakil, Lalibela & Omo Valley",
-  description:
-    "Browse all curated Ethiopia tour itineraries. 7 to 15-day packages covering Danakil Depression, Lalibela rock-hewn churches, Omo Valley tribes, Simien Mountains & Gondar castles. Tailor-made or small group departures.",
-};
+export async function generateMetadata() {
+  const locale = await getLocaleFromCookies();
+  return getPageMeta("itineraries", locale);
+}
 
 export default async function ItinerariesPage() {
+  const locale = await getLocaleFromCookies();
   const trips = await getToursFromSupabase();
 
   return (
@@ -21,11 +22,11 @@ export default async function ItinerariesPage() {
       <JsonLd
         id="itineraries-jsonld"
         schema={[
-          buildTourListSchema(trips, "All Ethiopia Itineraries", "/itineraries"),
+          buildTourListSchema(trips, "All Ethiopia Itineraries", "/itineraries", locale),
           buildBreadcrumbSchema([
             { name: "Home", url: "/" },
             { name: "Itineraries", url: "/itineraries" },
-          ]),
+          ], locale),
         ]}
       />
       <TopNavBar />

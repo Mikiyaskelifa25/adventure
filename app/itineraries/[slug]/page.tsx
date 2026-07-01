@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { getTourBySlugFromSupabase, getToursFromSupabase } from "@/lib/supabaseData";
 import TopNavBar from "@/components/TopNavBar";
@@ -44,7 +45,7 @@ export async function generateMetadata({
       title: `${trip.title} | Adventure in Abyssinie`,
       description: trip.description,
       images: trip.heroImage
-        ? [{ url: trip.heroImage.startsWith("http") ? trip.heroImage : `https://adventureinnethiopia.com${trip.heroImage}`, width: 1200, height: 630, alt: trip.title }]
+        ? [{ url: trip.heroImage.startsWith("http") ? trip.heroImage : `/og-image.jpg`, width: 1200, height: 630, alt: trip.title }]
         : [],
     },
   };
@@ -55,6 +56,9 @@ export default async function TripDetailPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const cookieStore = await cookies();
+  const lang = cookieStore.get("lang")?.value;
+  const locale: "en" | "fr" | "ru" = lang === "fr" || lang === "ru" ? lang : "en";
   const { slug } = await params;
   const trip = await getTourBySlugFromSupabase(slug);
   
@@ -65,12 +69,12 @@ export default async function TripDetailPage({
       <JsonLd
         id={`tour-jsonld-${trip.slug}`}
         schema={[
-          buildTourSchema(trip),
+          buildTourSchema(trip, locale),
           buildBreadcrumbSchema([
             { name: "Home", url: "/" },
             { name: "Tours", url: "/itineraries" },
             { name: trip.title, url: `/itineraries/${trip.slug}` },
-          ]),
+          ], locale),
         ]}
       />
       <TopNavBar />

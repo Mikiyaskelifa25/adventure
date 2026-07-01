@@ -137,7 +137,7 @@ async function buildPDF(data: {
   const HEADER_Y = height - 70;
   
   try {
-    const logoPath = path.join(process.cwd(), "public", "logo.jpg");
+    const logoPath = path.join(process.cwd(), "public", "logo.webp");
     const logoBytes = fs.readFileSync(logoPath);
     const logoImage = await doc.embedJpg(logoBytes);
     page.drawImage(logoImage, { x: MARGIN, y: HEADER_Y - 75, width: 80, height: 80 });
