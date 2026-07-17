@@ -113,7 +113,33 @@ export default function Footer() {
           <p className="text-on-surface-variant/40 font-body text-[10px] uppercase tracking-[0.3em]">
             {t("copyright", lang)}
           </p>
-          <div className="flex gap-8 text-on-surface-variant/40 font-body text-[10px] uppercase tracking-widest">
+          <div className="flex items-center gap-8 text-on-surface-variant/40 font-body text-[10px] uppercase tracking-widest">
+            <a
+              href="https://www.getyourguide.com/-s783768"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="https://gyg.me/DFO5LFuz"
+                width="160"
+                height="auto"
+                style={{ border: "1px solid #c6c8d0" }}
+                alt="GetYourGuide | Adventure in Ethiopia travel"
+              />
+            </a>
+            <a
+              href="https://www.tripadvisor.com/Attraction_Review-g293791-d25131346-Reviews-Aventure_en_abyssinie_tour_and_travel-Addis_Ababa.html"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/trip.jpg"
+                width="160"
+                height="auto"
+                style={{ border: "1px solid #c6c8d0" }}
+                alt="TripAdvisor | Adventure in Ethiopia travel"
+              />
+            </a>
             <a 
               href="https://t.me/Mikiyaskelifa" 
               target="_blank" 
