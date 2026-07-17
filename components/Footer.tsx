@@ -109,11 +109,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-12 border-t border-outline/30 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-on-surface-variant/40 font-body text-[10px] uppercase tracking-[0.3em]">
+        <div className="pt-12 border-t border-outline/30 dark:border-white/5 flex flex-col items-center gap-6">
+          <p className="text-on-surface-variant/40 font-body text-[10px] uppercase tracking-[0.3em] text-center">
             {t("copyright", lang)}
           </p>
-          <div className="flex items-center gap-8 text-on-surface-variant/40 font-body text-[10px] uppercase tracking-widest">
+          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 text-on-surface-variant/40 font-body text-[10px] uppercase tracking-widest">
             <a
               href="https://www.getyourguide.com/-s783768"
               target="_blank"
@@ -121,9 +121,7 @@ export default function Footer() {
             >
               <img
                 src="https://gyg.me/DFO5LFuz"
-                width="160"
-                height="auto"
-                style={{ border: "1px solid #c6c8d0" }}
+                className="w-[120px] md:w-[160px] h-auto border border-[#c6c8d0]"
                 alt="GetYourGuide | Adventure in Ethiopia travel"
               />
             </a>
@@ -134,9 +132,7 @@ export default function Footer() {
             >
               <img
                 src="/trip.jpg"
-                width="160"
-                height="auto"
-                style={{ border: "1px solid #c6c8d0" }}
+                className="w-[120px] md:w-[160px] h-auto border border-[#c6c8d0]"
                 alt="TripAdvisor | Adventure in Ethiopia travel"
               />
             </a>
@@ -147,9 +143,7 @@ export default function Footer() {
             >
               <img
                 src="/ro.jpeg"
-                width="160"
-                height="auto"
-                style={{ border: "1px solid #c6c8d0" }}
+                className="w-[120px] md:w-[160px] h-auto border border-[#c6c8d0]"
                 alt="Routard | Adventure in Ethiopia travel"
               />
             </a>
