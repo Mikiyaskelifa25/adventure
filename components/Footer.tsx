@@ -140,6 +140,19 @@ export default function Footer() {
                 alt="TripAdvisor | Adventure in Ethiopia travel"
               />
             </a>
+            <a
+              href="https://www.routard.com/forums/t/voyage-en-famille-et-super-guide-en-ethiopie/246300/2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/ro.jpeg"
+                width="160"
+                height="auto"
+                style={{ border: "1px solid #c6c8d0" }}
+                alt="Routard | Adventure in Ethiopia travel"
+              />
+            </a>
             <a 
               href="https://t.me/Mikiyaskelifa" 
               target="_blank" 
